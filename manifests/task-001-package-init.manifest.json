@@ -1,0 +1,21 @@
+{
+  "goal": "Initialize maid_lsp package with version and public exports",
+  "taskType": "create",
+  "supersedes": [],
+  "creatableFiles": ["maid_lsp/__init__.py"],
+  "readonlyFiles": [],
+  "expectedArtifacts": {
+    "file": "maid_lsp/__init__.py",
+    "contains": [
+      {
+        "type": "attribute",
+        "name": "__version__"
+      },
+      {
+        "type": "attribute",
+        "name": "__all__"
+      }
+    ]
+  },
+  "validationCommand": ["pytest", "tests/test_task_001_init.py", "-v"]
+}

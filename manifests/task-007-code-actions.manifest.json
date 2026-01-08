@@ -1,0 +1,50 @@
+{
+  "goal": "Provide quick fixes for validation errors via code actions in maid_lsp/capabilities/code_actions.py",
+  "taskType": "create",
+  "creatableFiles": ["maid_lsp/capabilities/code_actions.py"],
+  "readonlyFiles": [
+    "maid_lsp/capabilities/diagnostics.py"
+  ],
+  "expectedArtifacts": {
+    "file": "maid_lsp/capabilities/code_actions.py",
+    "contains": [
+      {
+        "type": "class",
+        "name": "CodeActionsHandler",
+        "description": "Handles code action requests"
+      },
+      {
+        "type": "function",
+        "name": "get_code_actions",
+        "class": "CodeActionsHandler",
+        "description": "Get code actions for the given diagnostics",
+        "args": [
+          {"name": "params", "type": "CodeActionParams"},
+          {"name": "diagnostics", "type": "list[Diagnostic]"}
+        ],
+        "returns": {"type": "list[CodeAction]"}
+      },
+      {
+        "type": "function",
+        "name": "create_add_field_action",
+        "description": "Creates action to add missing field",
+        "args": [
+          {"name": "diagnostic", "type": "Diagnostic"},
+          {"name": "field_name", "type": "str"}
+        ],
+        "returns": {"type": "CodeAction"}
+      },
+      {
+        "type": "function",
+        "name": "create_file_action",
+        "description": "Creates action to create missing file",
+        "args": [
+          {"name": "diagnostic", "type": "Diagnostic"},
+          {"name": "file_path", "type": "str"}
+        ],
+        "returns": {"type": "CodeAction"}
+      }
+    ]
+  },
+  "validationCommand": ["pytest", "tests/test_task_007_code_actions.py", "-v"]
+}

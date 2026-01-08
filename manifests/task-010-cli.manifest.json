@@ -1,0 +1,30 @@
+{
+  "goal": "Command-line entry point for maid-lsp with argparse for configuration and stdio transport support",
+  "taskType": "create",
+  "creatableFiles": ["maid_lsp/__main__.py"],
+  "readonlyFiles": [
+    "maid_lsp/server.py"
+  ],
+  "expectedArtifacts": {
+    "file": "maid_lsp/__main__.py",
+    "contains": [
+      {
+        "type": "function",
+        "name": "main",
+        "description": "CLI entry point with argparse",
+        "args": [],
+        "returns": {"type": "None"}
+      },
+      {
+        "type": "function",
+        "name": "start_server",
+        "description": "Start the LSP server",
+        "args": [
+          {"name": "mode", "type": "str", "default": "\"stdio\""}
+        ],
+        "returns": {"type": "None"}
+      }
+    ]
+  },
+  "validationCommand": ["pytest", "tests/test_task_010_cli.py", "-v"]
+}

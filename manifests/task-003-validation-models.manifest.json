@@ -1,0 +1,78 @@
+{
+  "goal": "Define data models for validation results in maid_lsp/validation/models.py",
+  "taskType": "create",
+  "supersedes": [],
+  "creatableFiles": ["maid_lsp/validation/models.py"],
+  "readonlyFiles": [],
+  "expectedArtifacts": {
+    "file": "maid_lsp/validation/models.py",
+    "contains": [
+      {
+        "type": "class",
+        "name": "ValidationError",
+        "description": "Data class for a single validation error"
+      },
+      {
+        "type": "attribute",
+        "name": "code",
+        "class": "ValidationError"
+      },
+      {
+        "type": "attribute",
+        "name": "message",
+        "class": "ValidationError"
+      },
+      {
+        "type": "attribute",
+        "name": "file",
+        "class": "ValidationError"
+      },
+      {
+        "type": "attribute",
+        "name": "line",
+        "class": "ValidationError"
+      },
+      {
+        "type": "attribute",
+        "name": "column",
+        "class": "ValidationError"
+      },
+      {
+        "type": "attribute",
+        "name": "severity",
+        "class": "ValidationError"
+      },
+      {
+        "type": "class",
+        "name": "ValidationResult",
+        "description": "Data class for validation output"
+      },
+      {
+        "type": "attribute",
+        "name": "success",
+        "class": "ValidationResult"
+      },
+      {
+        "type": "attribute",
+        "name": "errors",
+        "class": "ValidationResult"
+      },
+      {
+        "type": "attribute",
+        "name": "warnings",
+        "class": "ValidationResult"
+      },
+      {
+        "type": "attribute",
+        "name": "metadata",
+        "class": "ValidationResult"
+      },
+      {
+        "type": "enum",
+        "name": "ValidationMode",
+        "description": "Enum with values BEHAVIORAL and IMPLEMENTATION"
+      }
+    ]
+  },
+  "validationCommand": ["pytest", "tests/test_task_003_validation_models.py", "-v"]
+}

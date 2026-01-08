@@ -1,0 +1,59 @@
+{
+  "goal": "Handle diagnostic publishing with debouncing in maid_lsp/capabilities/diagnostics.py",
+  "taskType": "create",
+  "supersedes": [],
+  "creatableFiles": ["maid_lsp/capabilities/diagnostics.py"],
+  "readonlyFiles": [
+    "maid_lsp/validation/runner.py",
+    "maid_lsp/validation/parser.py",
+    "maid_lsp/utils/debounce.py"
+  ],
+  "expectedArtifacts": {
+    "file": "maid_lsp/capabilities/diagnostics.py",
+    "contains": [
+      {
+        "type": "enum",
+        "name": "DiagnosticCode",
+        "description": "Enum of MAID diagnostic codes MAID_001 through MAID_008"
+      },
+      {
+        "type": "class",
+        "name": "DiagnosticsHandler",
+        "description": "Manages diagnostic publishing with debouncing support"
+      },
+      {
+        "type": "function",
+        "name": "__init__",
+        "class": "DiagnosticsHandler",
+        "description": "Initialize the diagnostics handler with runner and debouncer",
+        "args": [
+          {"name": "runner", "type": "MaidRunner"},
+          {"name": "debouncer", "type": "Debouncer"}
+        ]
+      },
+      {
+        "type": "function",
+        "name": "validate_and_publish",
+        "class": "DiagnosticsHandler",
+        "description": "Validate a document and publish diagnostics to the server",
+        "args": [
+          {"name": "server"},
+          {"name": "uri", "type": "str"}
+        ],
+        "returns": {"type": "None"}
+      },
+      {
+        "type": "function",
+        "name": "clear_diagnostics",
+        "class": "DiagnosticsHandler",
+        "description": "Clear diagnostics for a document URI",
+        "args": [
+          {"name": "server"},
+          {"name": "uri", "type": "str"}
+        ],
+        "returns": {"type": "None"}
+      }
+    ]
+  },
+  "validationCommand": ["pytest", "tests/test_task_006_diagnostics.py", "-v"]
+}

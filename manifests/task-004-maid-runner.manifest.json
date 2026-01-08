@@ -1,0 +1,46 @@
+{
+  "goal": "Create an async wrapper for maid-runner CLI execution in maid_lsp/validation/runner.py",
+  "taskType": "create",
+  "supersedes": [],
+  "creatableFiles": ["maid_lsp/validation/runner.py"],
+  "readonlyFiles": ["maid_lsp/validation/models.py"],
+  "expectedArtifacts": {
+    "file": "maid_lsp/validation/runner.py",
+    "contains": [
+      {
+        "type": "class",
+        "name": "MaidRunner",
+        "description": "Async wrapper for maid-runner CLI"
+      },
+      {
+        "type": "function",
+        "name": "__init__",
+        "class": "MaidRunner",
+        "args": [
+          {"name": "maid_runner_path", "type": "Optional[str]"},
+          {"name": "timeout", "type": "float"}
+        ]
+      },
+      {
+        "type": "function",
+        "name": "validate",
+        "class": "MaidRunner",
+        "args": [
+          {"name": "manifest_path", "type": "Path"},
+          {"name": "mode", "type": "ValidationMode"}
+        ],
+        "returns": {"type": "ValidationResult"}
+      },
+      {
+        "type": "function",
+        "name": "find_manifests",
+        "class": "MaidRunner",
+        "args": [
+          {"name": "file_path", "type": "Path"}
+        ],
+        "returns": {"type": "list[Path]"}
+      }
+    ]
+  },
+  "validationCommand": ["pytest", "tests/test_task_004_maid_runner.py", "-v"]
+}

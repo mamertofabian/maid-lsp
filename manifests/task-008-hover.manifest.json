@@ -1,0 +1,39 @@
+{
+  "goal": "Show artifact information on hover via HoverHandler in maid_lsp/capabilities/hover.py",
+  "taskType": "create",
+  "creatableFiles": ["maid_lsp/capabilities/hover.py"],
+  "readonlyFiles": [
+    "maid_lsp/validation/models.py"
+  ],
+  "expectedArtifacts": {
+    "file": "maid_lsp/capabilities/hover.py",
+    "contains": [
+      {
+        "type": "class",
+        "name": "HoverHandler",
+        "description": "Handles hover requests"
+      },
+      {
+        "type": "function",
+        "name": "get_hover",
+        "class": "HoverHandler",
+        "description": "Get hover information for a position in the document",
+        "args": [
+          {"name": "params", "type": "HoverParams"},
+          {"name": "document", "type": "TextDocument"}
+        ],
+        "returns": {"type": "Optional[Hover]"}
+      },
+      {
+        "type": "function",
+        "name": "format_artifact_hover",
+        "description": "Formats artifact info as markdown for hover display",
+        "args": [
+          {"name": "artifact", "type": "dict"}
+        ],
+        "returns": {"type": "str"}
+      }
+    ]
+  },
+  "validationCommand": ["pytest", "tests/test_task_008_hover.py", "-v"]
+}

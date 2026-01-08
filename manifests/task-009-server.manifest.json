@@ -1,0 +1,31 @@
+{
+  "goal": "Main LSP server with pygls integration that registers handlers for document lifecycle and capability features",
+  "taskType": "create",
+  "creatableFiles": ["maid_lsp/server.py"],
+  "readonlyFiles": [
+    "maid_lsp/capabilities/diagnostics.py",
+    "maid_lsp/capabilities/code_actions.py",
+    "maid_lsp/capabilities/hover.py",
+    "maid_lsp/validation/runner.py",
+    "maid_lsp/utils/debounce.py"
+  ],
+  "expectedArtifacts": {
+    "file": "maid_lsp/server.py",
+    "contains": [
+      {
+        "type": "class",
+        "name": "MaidLanguageServer",
+        "bases": ["LanguageServer"],
+        "description": "Main LSP server class that extends pygls LanguageServer"
+      },
+      {
+        "type": "function",
+        "name": "create_server",
+        "description": "Factory function to create and configure the server",
+        "args": [],
+        "returns": {"type": "MaidLanguageServer"}
+      }
+    ]
+  },
+  "validationCommand": ["pytest", "tests/test_task_009_server.py", "-v"]
+}

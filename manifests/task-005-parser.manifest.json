@@ -1,0 +1,42 @@
+{
+  "goal": "Convert validation results to LSP diagnostics in maid_lsp/validation/parser.py",
+  "taskType": "create",
+  "supersedes": [],
+  "creatableFiles": ["maid_lsp/validation/parser.py"],
+  "readonlyFiles": ["maid_lsp/validation/models.py"],
+  "expectedArtifacts": {
+    "file": "maid_lsp/validation/parser.py",
+    "contains": [
+      {
+        "type": "function",
+        "name": "validation_result_to_diagnostics",
+        "description": "Converts ValidationResult to list of LSP Diagnostic objects",
+        "args": [
+          {"name": "result", "type": "ValidationResult"},
+          {"name": "default_uri", "type": "str"}
+        ],
+        "returns": {"type": "list[Diagnostic]"}
+      },
+      {
+        "type": "function",
+        "name": "map_error_code_to_severity",
+        "description": "Maps MAID error codes to LSP DiagnosticSeverity",
+        "args": [
+          {"name": "code", "type": "str"}
+        ],
+        "returns": {"type": "DiagnosticSeverity"}
+      },
+      {
+        "type": "function",
+        "name": "parse_error_location",
+        "description": "Parses error location to LSP Range",
+        "args": [
+          {"name": "error", "type": "ValidationError"},
+          {"name": "document_uri", "type": "str"}
+        ],
+        "returns": {"type": "Range"}
+      }
+    ]
+  },
+  "validationCommand": ["pytest", "tests/test_task_005_parser.py", "-v"]
+}

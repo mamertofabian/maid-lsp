@@ -1,0 +1,43 @@
+{
+  "goal": "Create async debouncer for document change events with configurable delay",
+  "taskType": "create",
+  "supersedes": [],
+  "creatableFiles": ["maid_lsp/utils/debounce.py"],
+  "readonlyFiles": [],
+  "expectedArtifacts": {
+    "file": "maid_lsp/utils/debounce.py",
+    "contains": [
+      {
+        "type": "class",
+        "name": "Debouncer"
+      },
+      {
+        "type": "function",
+        "name": "debounce",
+        "class": "Debouncer",
+        "args": [
+          {"name": "key", "type": "str"},
+          {"name": "func", "type": "Callable[[], Awaitable[T]]"}
+        ],
+        "returns": "T"
+      },
+      {
+        "type": "function",
+        "name": "cancel",
+        "class": "Debouncer",
+        "args": [
+          {"name": "key", "type": "str"}
+        ],
+        "returns": "bool"
+      },
+      {
+        "type": "function",
+        "name": "cancel_all",
+        "class": "Debouncer",
+        "args": [],
+        "returns": "None"
+      }
+    ]
+  },
+  "validationCommand": ["pytest", "tests/test_task_002_debounce.py", "-v"]
+}
