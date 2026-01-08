@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 MAID LSP is a Language Server Protocol implementation for validating MAID (Manifest-driven AI Development) manifests in real-time. It wraps the `maid-runner` CLI to provide validation feedback in editors like VS Code, JetBrains IDEs, and Claude Code.
 
-**Status**: v0.1.0 - Core implementation complete. All 10 tasks implemented and tested.
+**Status**: v0.1.2 - Core implementation complete. All 10 tasks implemented and tested.
 
 ## Common Commands
 

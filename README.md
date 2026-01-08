@@ -2,7 +2,7 @@
 
 Language Server Protocol implementation for MAID (Manifest-driven AI Development) methodology validation.
 
-> **Status**: v0.1.0 - Core implementation complete. All LSP capabilities functional.
+> **Status**: v0.1.2 - Core implementation complete. All LSP capabilities functional.
 
 ## Overview
 
