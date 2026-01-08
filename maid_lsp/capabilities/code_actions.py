@@ -10,6 +10,7 @@ from lsprotocol.types import (
     CodeAction,
     CodeActionKind,
     CodeActionParams,
+    Command,
     CreateFile,
     Diagnostic,
     OptionalVersionedTextDocumentIdentifier,
@@ -170,6 +171,84 @@ def create_file_action(diagnostic: Diagnostic, file_path: str) -> CodeAction:
         kind=CodeActionKind.QuickFix,
         diagnostics=[diagnostic],
         edit=workspace_edit,
+    )
+
+
+def create_generate_snapshot_action(manifest_uri: str) -> CodeAction:
+    """Create a code action that will run maid snapshot command for the manifest.
+
+    Creates a CodeAction with a command to run the maid snapshot command
+    for the specified manifest.
+
+    Args:
+        manifest_uri: The URI of the manifest file to snapshot.
+
+    Returns:
+        A CodeAction that will run the maid snapshot command.
+    """
+    return CodeAction(
+        title="Generate snapshot for manifest",
+        kind=CodeActionKind.Source,
+        command=Command(
+            title="Run maid snapshot",
+            command="maid.snapshot",
+            arguments=[manifest_uri],
+        ),
+    )
+
+
+def create_update_version_action(
+    document_uri: str, current_version: str | None
+) -> CodeAction:
+    """Create a code action to update the manifest version field.
+
+    Creates a CodeAction with kind 'quickfix' that updates the version field
+    of the manifest.
+
+    Args:
+        document_uri: The URI of the manifest document.
+        current_version: The current version string, or None if not set.
+
+    Returns:
+        A CodeAction that will update the version field.
+    """
+    if current_version is not None:
+        title = f"Update version (currently {current_version})"
+    else:
+        title = "Add version field"
+
+    return CodeAction(
+        title=title,
+        kind=CodeActionKind.QuickFix,
+        command=Command(
+            title="Update manifest version",
+            command="maid.updateVersion",
+            arguments=[document_uri],
+        ),
+    )
+
+
+def create_generate_tests_action(manifest_uri: str, test_file_path: str) -> CodeAction:
+    """Create a code action to generate test file stubs for the manifest.
+
+    Creates a CodeAction with a command to generate test file stubs
+    based on the manifest specification.
+
+    Args:
+        manifest_uri: The URI of the manifest file.
+        test_file_path: The path where the test file should be generated.
+
+    Returns:
+        A CodeAction that will generate test stubs.
+    """
+    return CodeAction(
+        title=f"Generate tests: {test_file_path}",
+        kind=CodeActionKind.Source,
+        command=Command(
+            title="Generate test stubs",
+            command="maid.generateTests",
+            arguments=[manifest_uri, test_file_path],
+        ),
     )
 
 

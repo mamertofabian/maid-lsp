@@ -1,0 +1,44 @@
+{
+  "goal": "Add 3 additional code actions to code_actions.py: create_generate_snapshot_action, create_update_version_action, and create_generate_tests_action",
+  "taskType": "edit",
+  "editableFiles": ["maid_lsp/capabilities/code_actions.py"],
+  "readonlyFiles": [
+    "maid_lsp/capabilities/diagnostics.py",
+    "maid_lsp/server.py"
+  ],
+  "expectedArtifacts": {
+    "file": "maid_lsp/capabilities/code_actions.py",
+    "contains": [
+      {
+        "type": "function",
+        "name": "create_generate_snapshot_action",
+        "description": "Creates a code action that will run maid snapshot command for the manifest",
+        "args": [
+          {"name": "manifest_uri", "type": "str"}
+        ],
+        "returns": {"type": "CodeAction"}
+      },
+      {
+        "type": "function",
+        "name": "create_update_version_action",
+        "description": "Creates a code action to update the manifest version field",
+        "args": [
+          {"name": "document_uri", "type": "str"},
+          {"name": "current_version", "type": "str | None"}
+        ],
+        "returns": {"type": "CodeAction"}
+      },
+      {
+        "type": "function",
+        "name": "create_generate_tests_action",
+        "description": "Creates a code action to generate test file stubs for the manifest",
+        "args": [
+          {"name": "manifest_uri", "type": "str"},
+          {"name": "test_file_path", "type": "str"}
+        ],
+        "returns": {"type": "CodeAction"}
+      }
+    ]
+  },
+  "validationCommand": ["pytest", "tests/test_task_011_additional_code_actions.py", "-v"]
+}
