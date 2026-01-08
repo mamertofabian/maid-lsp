@@ -70,7 +70,7 @@ class MaidRunner:
         )
 
         try:
-            stdout, stderr = await asyncio.wait_for(
+            stdout, _stderr = await asyncio.wait_for(
                 process.communicate(),
                 timeout=self.timeout,
             )
@@ -136,7 +136,7 @@ class MaidRunner:
         )
 
         try:
-            stdout, stderr = await asyncio.wait_for(
+            stdout, _stderr = await asyncio.wait_for(
                 process.communicate(),
                 timeout=self.timeout,
             )

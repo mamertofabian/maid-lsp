@@ -5,6 +5,8 @@ publishing with debouncing support, and the DiagnosticCode enum that defines
 MAID diagnostic codes.
 """
 
+import asyncio
+import contextlib
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -86,7 +88,9 @@ class DiagnosticsHandler:
             server.publish_diagnostics(params)
 
         # Use debouncer to coalesce rapid calls
-        await self._debouncer.debounce(uri, _do_validation)
+        # Handle CancelledError gracefully (e.g., server shutdown or superseded request)
+        with contextlib.suppress(asyncio.CancelledError):
+            await self._debouncer.debounce(uri, _do_validation)
 
     def clear_diagnostics(self, server: Any, uri: str) -> None:
         """Clear diagnostics for a document URI.

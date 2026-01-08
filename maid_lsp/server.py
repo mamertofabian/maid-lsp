@@ -124,5 +124,9 @@ def _register_handlers(server: MaidLanguageServer) -> None:
         Returns hover information for the position.
         """
         uri = params.text_document.uri
-        document = server.workspace.get_text_document(uri)
-        return server.hover_handler.get_hover(params, document)
+        try:
+            document = server.workspace.get_text_document(uri)
+            return server.hover_handler.get_hover(params, document)
+        except (FileNotFoundError, KeyError):
+            # Document not opened yet or not found
+            return None
