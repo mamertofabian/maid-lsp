@@ -45,7 +45,7 @@ dev = [
 ]
 
 [project.scripts]
-maid-lsp = "maid_lsp.server:main"
+maid-lsp = "maid_lsp.__main__:main"
 
 [project.urls]
 Homepage = "https://github.com/mamertofabian/maid-lsp"

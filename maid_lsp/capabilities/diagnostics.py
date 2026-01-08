@@ -85,7 +85,7 @@ class DiagnosticsHandler:
 
             # Publish diagnostics to server
             params = PublishDiagnosticsParams(uri=uri, diagnostics=diagnostics)
-            server.publish_diagnostics(params)
+            server.text_document_publish_diagnostics(params)
 
         # Use debouncer to coalesce rapid calls
         # Handle CancelledError gracefully (e.g., server shutdown or superseded request)
@@ -105,4 +105,5 @@ class DiagnosticsHandler:
         Returns:
             None
         """
-        server.publish_diagnostics(uri, [])
+        params = PublishDiagnosticsParams(uri=uri, diagnostics=[])
+        server.text_document_publish_diagnostics(params)

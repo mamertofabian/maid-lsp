@@ -160,7 +160,7 @@ class TestDiagnosticsHandlerValidateAndPublish:
 
         # Setup mock server
         server = MagicMock()
-        server.publish_diagnostics = MagicMock()
+        server.text_document_publish_diagnostics = MagicMock()
 
         uri = "file:///path/to/test.manifest.json"
         await handler.validate_and_publish(server=server, uri=uri)
@@ -205,13 +205,13 @@ class TestDiagnosticsHandlerValidateAndPublish:
 
         # Setup mock server
         server = MagicMock()
-        server.publish_diagnostics = MagicMock()
+        server.text_document_publish_diagnostics = MagicMock()
 
         uri = "file:///path/to/test.manifest.json"
         await handler.validate_and_publish(server=server, uri=uri)
 
         # Verify publish_diagnostics was called
-        server.publish_diagnostics.assert_called_once()
+        server.text_document_publish_diagnostics.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_validate_and_publish_uses_debouncer(self) -> None:
@@ -238,7 +238,7 @@ class TestDiagnosticsHandlerValidateAndPublish:
 
         # Setup mock server
         server = MagicMock()
-        server.publish_diagnostics = MagicMock()
+        server.text_document_publish_diagnostics = MagicMock()
 
         uri = "file:///path/to/test.manifest.json"
         await handler.validate_and_publish(server=server, uri=uri)
@@ -271,7 +271,7 @@ class TestDiagnosticsHandlerValidateAndPublish:
         handler = DiagnosticsHandler(runner=runner, debouncer=debouncer)
 
         server = MagicMock()
-        server.publish_diagnostics = MagicMock()
+        server.text_document_publish_diagnostics = MagicMock()
 
         uri = "file:///path/to/test.manifest.json"
         result = await handler.validate_and_publish(server=server, uri=uri)
@@ -309,13 +309,13 @@ class TestDiagnosticsHandlerValidateAndPublish:
         handler = DiagnosticsHandler(runner=runner, debouncer=debouncer)
 
         server = MagicMock()
-        server.publish_diagnostics = MagicMock()
+        server.text_document_publish_diagnostics = MagicMock()
 
         uri = "file:///path/to/test.manifest.json"
         await handler.validate_and_publish(server=server, uri=uri)
 
         # Verify publish_diagnostics was called with diagnostics
-        server.publish_diagnostics.assert_called_once()
+        server.text_document_publish_diagnostics.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_validate_and_publish_empty_diagnostics_on_success(self) -> None:
@@ -339,15 +339,15 @@ class TestDiagnosticsHandlerValidateAndPublish:
         handler = DiagnosticsHandler(runner=runner, debouncer=debouncer)
 
         server = MagicMock()
-        server.publish_diagnostics = MagicMock()
+        server.text_document_publish_diagnostics = MagicMock()
 
         uri = "file:///path/to/test.manifest.json"
         await handler.validate_and_publish(server=server, uri=uri)
 
         # Verify publish_diagnostics was called
-        server.publish_diagnostics.assert_called_once()
+        server.text_document_publish_diagnostics.assert_called_once()
         # The diagnostics list should be empty or minimal
-        call_args = server.publish_diagnostics.call_args
+        call_args = server.text_document_publish_diagnostics.call_args
         # Check that the URI is correct
         assert uri in str(call_args)
 
@@ -364,13 +364,13 @@ class TestDiagnosticsHandlerClearDiagnostics:
         handler = DiagnosticsHandler(runner=runner, debouncer=debouncer)
 
         server = MagicMock()
-        server.publish_diagnostics = MagicMock()
+        server.text_document_publish_diagnostics = MagicMock()
 
         uri = "file:///path/to/test.manifest.json"
         handler.clear_diagnostics(server=server, uri=uri)
 
         # Verify publish_diagnostics was called with empty diagnostics
-        server.publish_diagnostics.assert_called_once()
+        server.text_document_publish_diagnostics.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_clear_diagnostics_uses_correct_uri(self) -> None:
@@ -381,13 +381,13 @@ class TestDiagnosticsHandlerClearDiagnostics:
         handler = DiagnosticsHandler(runner=runner, debouncer=debouncer)
 
         server = MagicMock()
-        server.publish_diagnostics = MagicMock()
+        server.text_document_publish_diagnostics = MagicMock()
 
         uri = "file:///specific/path/manifest.json"
         handler.clear_diagnostics(server=server, uri=uri)
 
         # Verify the URI is passed correctly
-        call_args = server.publish_diagnostics.call_args
+        call_args = server.text_document_publish_diagnostics.call_args
         assert uri in str(call_args)
 
     @pytest.mark.asyncio
@@ -399,23 +399,17 @@ class TestDiagnosticsHandlerClearDiagnostics:
         handler = DiagnosticsHandler(runner=runner, debouncer=debouncer)
 
         server = MagicMock()
-        server.publish_diagnostics = MagicMock()
+        server.text_document_publish_diagnostics = MagicMock()
 
         uri = "file:///path/to/test.manifest.json"
         handler.clear_diagnostics(server=server, uri=uri)
 
         # Verify publish_diagnostics was called
-        server.publish_diagnostics.assert_called_once()
-        # The second argument should be an empty list
-        call_args = server.publish_diagnostics.call_args
-        # Check that an empty list is passed (positional or keyword)
-        if call_args.args:
-            # Positional args: (uri, diagnostics)
-            assert call_args.args[1] == [] or len(call_args.args[1]) == 0
-        else:
-            # Keyword args
-            diagnostics = call_args.kwargs.get("diagnostics", [])
-            assert diagnostics == [] or len(diagnostics) == 0
+        server.text_document_publish_diagnostics.assert_called_once()
+        # Check that params has empty diagnostics list
+        call_args = server.text_document_publish_diagnostics.call_args
+        params = call_args.args[0]
+        assert params.diagnostics == []
 
 
 class TestDiagnosticsHandlerIntegration:
@@ -460,13 +454,13 @@ class TestDiagnosticsHandlerIntegration:
         handler = DiagnosticsHandler(runner=runner, debouncer=debouncer)
 
         server = MagicMock()
-        server.publish_diagnostics = MagicMock()
+        server.text_document_publish_diagnostics = MagicMock()
 
         uri = "file:///path/to/test.manifest.json"
         await handler.validate_and_publish(server=server, uri=uri)
 
         # Verify publish_diagnostics was called with multiple diagnostics
-        server.publish_diagnostics.assert_called_once()
+        server.text_document_publish_diagnostics.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_validate_and_publish_converts_file_uri_to_path(self) -> None:
@@ -490,7 +484,7 @@ class TestDiagnosticsHandlerIntegration:
         handler = DiagnosticsHandler(runner=runner, debouncer=debouncer)
 
         server = MagicMock()
-        server.publish_diagnostics = MagicMock()
+        server.text_document_publish_diagnostics = MagicMock()
 
         uri = "file:///home/user/project/manifest.json"
         await handler.validate_and_publish(server=server, uri=uri)

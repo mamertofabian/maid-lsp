@@ -1,0 +1,19 @@
+{
+  "testModules": [
+    {
+      "moduleId": "tests/test_task_006_diagnostics.py",
+      "tests": [
+        {
+          "name": "collection_error_tests/test_task_006_diagnostics.py",
+          "fullName": "tests/test_task_006_diagnostics.py",
+          "state": "failed",
+          "errors": [
+            {
+              "message": "ImportError while importing test module '/home/atomrem/projects/codefrost-dev/maid-lsp/tests/test_task_006_diagnostics.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n../../../.local/lib/python3.10/site-packages/_pytest/python.py:498: in importtestmodule\n    mod = import_path(\n../../../.local/lib/python3.10/site-packages/_pytest/pathlib.py:587: in import_path\n    importlib.import_module(module_name)\n/usr/lib/python3.10/importlib/__init__.py:126: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n<frozen importlib._bootstrap>:1050: in _gcd_import\n    ???\n<frozen importlib._bootstrap>:1027: in _find_and_load\n    ???\n<frozen importlib._bootstrap>:1006: in _find_and_load_unlocked\n    ???\n<frozen importlib._bootstrap>:688: in _load_unlocked\n    ???\n../../../.local/lib/python3.10/site-packages/_pytest/assertion/rewrite.py:186: in exec_module\n    exec(co, module.__dict__)\ntests/test_task_006_diagnostics.py:14: in <module>\n    from maid_lsp.capabilities.diagnostics import DiagnosticCode, DiagnosticsHandler\nmaid_lsp/capabilities/diagnostics.py:15: in <module>\n    from lsprotocol.types import PublishDiagnosticsParams\nE   ModuleNotFoundError: No module named 'lsprotocol'"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
