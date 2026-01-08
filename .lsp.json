@@ -1,0 +1,28 @@
+{
+  "maid": {
+    "command": "maid-lsp",
+    "args": ["--stdio"],
+    "extensionToLanguage": {
+      ".manifest.json": "maid-manifest"
+    },
+    "initializationOptions": {
+      "maid.validation.debounceMs": 100,
+      "maid.validation.timeout": 10000
+    },
+    "settings": {
+      "maid.validation.enabled": true,
+      "maid.validation.mode": "auto"
+    },
+    "transport": "stdio",
+    "startupTimeout": 5000,
+    "shutdownTimeout": 3000,
+    "restartOnCrash": true,
+    "maxRestarts": 3,
+    "loggingConfig": {
+      "args": ["--verbose"],
+      "env": {
+        "MAID_LSP_LOG_FILE": "${CLAUDE_PLUGIN_LSP_LOG_FILE}"
+      }
+    }
+  }
+}
