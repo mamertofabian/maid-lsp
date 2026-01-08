@@ -62,6 +62,9 @@ class DiagnosticsHandler:
         rapid calls, validates the manifest, converts the result to diagnostics,
         and publishes them to the server.
 
+        Only validates files ending with '.manifest.json' to avoid false
+        positives on other JSON files.
+
         Args:
             server: LSP server instance with publish_diagnostics method.
             uri: Document URI (file:// format) to validate.
@@ -72,6 +75,10 @@ class DiagnosticsHandler:
         # Extract file path from URI
         parsed = urlparse(uri)
         file_path = Path(unquote(parsed.path))
+
+        # Only validate MAID manifest files (*.manifest.json)
+        if not file_path.name.endswith(".manifest.json"):
+            return
 
         async def _do_validation() -> None:
             # Call runner.validate with the manifest path (positional args)

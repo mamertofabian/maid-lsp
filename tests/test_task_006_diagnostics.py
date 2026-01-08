@@ -486,7 +486,7 @@ class TestDiagnosticsHandlerIntegration:
         server = MagicMock()
         server.text_document_publish_diagnostics = MagicMock()
 
-        uri = "file:///home/user/project/manifest.json"
+        uri = "file:///home/user/project/task-001-test.manifest.json"
         await handler.validate_and_publish(server=server, uri=uri)
 
         # Verify runner.validate was called with a Path object
@@ -494,4 +494,4 @@ class TestDiagnosticsHandlerIntegration:
         call_args = runner.validate.call_args
         manifest_path = call_args[0][0]
         assert isinstance(manifest_path, Path)
-        assert str(manifest_path) == "/home/user/project/manifest.json"
+        assert str(manifest_path) == "/home/user/project/task-001-test.manifest.json"

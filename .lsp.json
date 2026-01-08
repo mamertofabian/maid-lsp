@@ -3,7 +3,7 @@
     "command": "maid-lsp",
     "args": ["--stdio"],
     "extensionToLanguage": {
-      ".manifest.json": "maid-manifest"
+      ".json": "json"
     },
     "initializationOptions": {
       "maid.validation.debounceMs": 100,
