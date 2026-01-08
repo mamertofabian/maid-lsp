@@ -2,23 +2,68 @@
 
 Language Server Protocol implementation for MAID (Manifest-driven AI Development) methodology validation.
 
-> **Status**: Architecture Design Complete (Issue #37). Implementation pending using MAID methodology.
+> **Status**: v0.1.0 - Core implementation complete. All LSP capabilities functional.
 
 ## Overview
 
-MAID LSP will provide real-time validation of MAID manifests in code editors and IDEs, including:
+MAID LSP provides real-time validation of MAID manifests in code editors and IDEs, including:
 
 - **VS Code** (via extension)
 - **JetBrains IDEs** (via plugin)
 - **Claude Code** (native LSP support)
 - Any LSP-compatible editor
 
-## Planned Features
+## Features
 
 - **Real-time Diagnostics**: Instant validation feedback as you edit manifests
-- **Code Actions**: Quick fixes for common validation errors
-- **Hover Information**: Detailed artifact information on hover
-- **Push Diagnostics**: Server pushes validation results on document changes
+- **Code Actions**: Quick fixes for common validation errors (add missing fields, create referenced files)
+- **Hover Information**: Detailed artifact information on hover (functions, classes, attributes)
+- **Push Diagnostics**: Server pushes validation results on document changes with 100ms debouncing
+
+## Installation
+
+### Prerequisites
+
+- Python 3.10+
+- maid-runner >= 0.8.0
+- uv (package manager)
+
+### From Source
+
+```bash
+# Clone the repository
+git clone https://github.com/mamertofabian/maid-lsp.git
+cd maid-lsp
+
+# Install dependencies
+uv sync --all-extras
+
+# Run the server
+uv run maid-lsp --stdio
+```
+
+## Usage
+
+### Running the Server
+
+```bash
+# Start in stdio mode (default)
+maid-lsp --stdio
+
+# Or via make
+make run
+
+# Check version
+maid-lsp --version
+```
+
+### Editor Integration
+
+The server communicates via stdio and validates files matching `*.manifest.json`.
+
+**Claude Code**: Configure `.lsp.json` in your project root (see `.lsp.json` in this repo for example).
+
+**VS Code**: Use the vscode-maid extension (planned).
 
 ## Architecture
 
@@ -30,77 +75,109 @@ See the [docs/](docs/) directory for detailed architecture documentation:
 - [Performance](docs/performance.md) - Performance specifications
 - [Claude Code](docs/claude-code.md) - Claude Code integration guide
 
-## Development
+### Three-Layer Design
 
-This project uses the **MAID methodology** for all implementation. Each feature will be developed following the MAID workflow:
-
-1. **Phase 1**: Goal Definition
-2. **Phase 2**: Planning Loop (manifest + behavioral tests)
-3. **Phase 3**: Implementation (code to pass tests)
-4. **Phase 4**: Integration
-
-### Prerequisites
-
-- Python 3.10+
-- maid-runner >= 0.8.0
-- uv (package manager)
-
-### Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/mamertofabian/maid-lsp.git
-cd maid-lsp
-
-# Install dependencies
-uv sync --all-extras
-
-# Run tests
-make test
-
-# Run linting
-make lint
-
-# Run type checking
-make type-check
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Protocol Layer                        │
+│                   (maid_lsp/server.py)                  │
+│                    pygls + LSP handlers                  │
+└─────────────────────────────────────────────────────────┘
+                           │
+┌─────────────────────────────────────────────────────────┐
+│                  Capabilities Layer                      │
+│              (maid_lsp/capabilities/)                   │
+│         diagnostics.py │ code_actions.py │ hover.py     │
+└─────────────────────────────────────────────────────────┘
+                           │
+┌─────────────────────────────────────────────────────────┐
+│                  Validation Layer                        │
+│               (maid_lsp/validation/)                    │
+│           runner.py │ parser.py │ models.py             │
+└─────────────────────────────────────────────────────────┘
 ```
 
-### Project Structure (Planned)
+**Key design decision**: The server wraps `maid-runner` CLI via subprocess rather than importing modules directly. This keeps validation logic separate and uses CLI output as a stable API contract.
+
+### Project Structure
 
 ```
 maid-lsp/
 ├── maid_lsp/
-│   ├── __init__.py
-│   ├── server.py           # Main LSP server
-│   ├── capabilities/       # LSP capability handlers
-│   │   ├── diagnostics.py
-│   │   ├── code_actions.py
-│   │   └── hover.py
-│   ├── validation/         # maid-runner integration
-│   │   ├── runner.py
-│   │   └── parser.py
+│   ├── __init__.py           # Package init with version
+│   ├── __main__.py           # CLI entry point
+│   ├── server.py             # Main LSP server
+│   ├── capabilities/         # LSP capability handlers
+│   │   ├── diagnostics.py    # Diagnostic publishing
+│   │   ├── code_actions.py   # Quick fix actions
+│   │   └── hover.py          # Hover information
+│   ├── validation/           # maid-runner integration
+│   │   ├── models.py         # Data models
+│   │   ├── runner.py         # CLI wrapper
+│   │   └── parser.py         # Result to diagnostic conversion
 │   └── utils/
-│       └── debounce.py
-├── tests/
-├── docs/
-├── manifests/              # MAID manifests (dogfooding)
+│       └── debounce.py       # Async debouncer
+├── tests/                    # Behavioral tests
+├── docs/                     # Architecture documentation
+├── manifests/                # MAID manifests (dogfooding)
 ├── .claude-plugin/
-│   └── plugin.json
-└── .lsp.json
+│   └── plugin.json           # Claude Code plugin config
+└── .lsp.json                 # LSP server configuration
 ```
 
-## Diagnostic Codes (Planned)
+## Diagnostic Codes
 
-| Code | Description |
-|------|-------------|
-| `MAID-001` | Schema validation errors |
-| `MAID-002` | Missing required fields |
-| `MAID-003` | File reference errors |
-| `MAID-004` | Artifact validation errors |
-| `MAID-005` | Behavioral validation errors |
-| `MAID-006` | Implementation validation errors |
-| `MAID-007` | Manifest chain errors |
-| `MAID-008` | Coherence validation warnings |
+| Code | Severity | Description |
+|------|----------|-------------|
+| `MAID-001` | Error | Schema validation errors |
+| `MAID-002` | Error | Missing required fields |
+| `MAID-003` | Error | File reference errors |
+| `MAID-004` | Error | Artifact validation errors |
+| `MAID-005` | Error | Behavioral validation errors |
+| `MAID-006` | Error | Implementation validation errors |
+| `MAID-007` | Error | Manifest chain errors |
+| `MAID-008` | Warning | Coherence validation warnings |
+
+## Development
+
+### Commands
+
+```bash
+# Install dependencies
+uv sync --all-extras
+
+# Run all quality checks (lint + type-check + test)
+make all
+
+# Individual commands
+make lint           # Run ruff linter
+make lint-fix       # Auto-fix linting issues
+make type-check     # Run mypy type checker
+make test           # Run pytest
+make test-cov       # Run tests with coverage report
+make format         # Format code with black
+make format-check   # Check formatting without changes
+
+# Run a single test
+uv run pytest tests/test_task_002_debounce.py -v
+```
+
+### MAID Methodology
+
+This project uses the **MAID methodology** for all implementation. Each feature was developed following the MAID workflow with manifests in the `manifests/` directory.
+
+| Task | Component | Status |
+|------|-----------|--------|
+| task-001 | Package initialization | Complete |
+| task-002 | Async debouncer | Complete |
+| task-003 | Validation models | Complete |
+| task-004 | MaidRunner CLI wrapper | Complete |
+| task-005 | Validation parser | Complete |
+| task-006 | Diagnostics handler | Complete |
+| task-007 | Code actions handler | Complete |
+| task-008 | Hover handler | Complete |
+| task-009 | Main server | Complete |
+| task-010 | CLI entry point | Complete |
 
 ## Related Projects
 
