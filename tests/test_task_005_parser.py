@@ -191,6 +191,29 @@ class TestValidationResultToDiagnostics:
         assert DiagnosticSeverity.Error in severities
         assert DiagnosticSeverity.Warning in severities
 
+    def test_converts_informational_to_diagnostics(self) -> None:
+        """Should convert informational messages to Information severity diagnostics."""
+        info = ValidationError(
+            code="I103",
+            message="This manifest has been superseded",
+            file="/path/to/manifest.json",
+            line=1,
+            column=1,
+            severity="info",
+        )
+        result = ValidationResult(
+            success=True,
+            errors=[],
+            warnings=[info],
+            metadata={},
+        )
+
+        diagnostics = validation_result_to_diagnostics(result, "file:///path/to/manifest.json")
+
+        assert len(diagnostics) == 1
+        assert diagnostics[0].severity == DiagnosticSeverity.Information
+        assert diagnostics[0].code == "I103"
+
     def test_diagnostics_have_correct_range(self) -> None:
         """Diagnostics should have Range based on error location."""
         error = ValidationError(
@@ -259,6 +282,16 @@ class TestMapErrorCodeToSeverity:
         """MAID-008 should return Warning severity."""
         severity = map_error_code_to_severity("MAID-008")
         assert severity == DiagnosticSeverity.Warning
+
+    def test_informational_code_returns_information(self) -> None:
+        """Codes starting with 'I' should return Information severity."""
+        severity = map_error_code_to_severity("I103")
+        assert severity == DiagnosticSeverity.Information
+
+    def test_other_informational_codes_return_information(self) -> None:
+        """Other informational codes should also return Information severity."""
+        severity = map_error_code_to_severity("I001")
+        assert severity == DiagnosticSeverity.Information
 
     def test_unknown_code_defaults_to_error(self) -> None:
         """Unknown error codes should default to Error severity."""

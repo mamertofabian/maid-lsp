@@ -43,19 +43,24 @@ def map_error_code_to_severity(code: str) -> DiagnosticSeverity:
     """Maps MAID error codes to LSP DiagnosticSeverity.
 
     MAID-001 through MAID-007 are errors, MAID-008 is a warning.
+    Codes starting with "I" (e.g., "I103") are informational.
     Unknown codes default to Error severity.
 
     Args:
-        code: MAID error code string (e.g., "MAID-001").
+        code: MAID error code string (e.g., "MAID-001", "I103").
 
     Returns:
         DiagnosticSeverity.Error for MAID-001 through MAID-007 and unknown codes.
         DiagnosticSeverity.Warning for MAID-008.
+        DiagnosticSeverity.Information for codes starting with "I".
     """
     warning_codes = {"MAID-008"}
 
     if code in warning_codes:
         return DiagnosticSeverity.Warning
+
+    if code.startswith("I"):
+        return DiagnosticSeverity.Information
 
     return DiagnosticSeverity.Error
 
