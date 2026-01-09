@@ -10,7 +10,7 @@ readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
 authors = [
-    { name = "MAID Team" }
+    { name = "Mamerto Fabian Jr.", email = "mamerto@codefrost.dev" }
 ]
 keywords = ["maid", "lsp", "language-server", "validation", "manifest"]
 classifiers = [
