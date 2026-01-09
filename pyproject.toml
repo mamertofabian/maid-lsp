@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "maid-lsp"
-version = "0.1.5"
+version = "0.1.6"
 description = "Language Server Protocol implementation for MAID methodology validation"
 readme = "README.md"
 license = { text = "MIT" }

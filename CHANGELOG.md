@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-01-10
+
+### Fixed
+- Run maid validate from project root containing manifests directory for proper path resolution
+- Merge auto-release into publish workflow and add branch cleanup for cleaner CI/CD
+
 ## [0.1.5] - 2026-01-09
 
 ### Changed
@@ -41,7 +47,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Debouncing for document changes (100ms delay)
 - Support for VS Code, JetBrains IDEs, and Claude Code
 
-[Unreleased]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.2...v0.1.3
