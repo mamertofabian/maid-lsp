@@ -98,3 +98,5 @@ Thumbs.db
 # uv
 .venv/
 uv.lock
+
+.claude/tdd-guard/
