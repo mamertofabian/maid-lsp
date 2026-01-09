@@ -177,6 +177,10 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           BRANCH="deps/update-maid-runner-${LATEST}"
+
+          # Delete remote branch if it exists (from previous failed run)
+          git push origin --delete "$BRANCH" 2>/dev/null || true
+
           git checkout -b "$BRANCH"
 
           git add pyproject.toml maid_lsp/__init__.py CHANGELOG.md
