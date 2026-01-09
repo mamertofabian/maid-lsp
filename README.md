@@ -2,8 +2,6 @@
 
 Language Server Protocol implementation for MAID (Manifest-driven AI Development) methodology validation.
 
-> **Status**: v0.1.2 - Core implementation complete. All LSP capabilities functional.
-
 ## Overview
 
 MAID LSP provides real-time validation of MAID manifests in code editors and IDEs, including:
