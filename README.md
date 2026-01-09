@@ -63,7 +63,7 @@ The server communicates via stdio and validates files matching `*.manifest.json`
 
 **Claude Code**: Configure `.lsp.json` in your project root (see `.lsp.json` in this repo for example).
 
-**VS Code**: Use the vscode-maid extension (planned).
+**VS Code / Cursor**: Install the [vscode-maid](https://github.com/mamertofabian/vscode-maid) extension from the marketplace.
 
 ## Architecture
 
@@ -182,7 +182,7 @@ This project uses the **MAID methodology** for all implementation. Each feature 
 ## Related Projects
 
 - [maid-runner](https://github.com/mamertofabian/maid-runner) - MAID CLI validation tool
-- [vscode-maid](https://github.com/mamertofabian/vscode-maid) - VS Code extension (planned)
+- [vscode-maid](https://github.com/mamertofabian/vscode-maid) - VS Code extension
 
 ## License
 
