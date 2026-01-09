@@ -61,8 +61,6 @@ maid-lsp --version
 
 The server communicates via stdio and validates files matching `*.manifest.json`.
 
-**Claude Code**: Configure `.lsp.json` in your project root (see `.lsp.json` in this repo for example).
-
 **VS Code / Cursor**: Install the [vscode-maid](https://github.com/mamertofabian/vscode-maid) extension from the marketplace.
 
 ## Architecture
@@ -73,7 +71,6 @@ See the [docs/](docs/) directory for detailed architecture documentation:
 - [Capabilities](docs/capabilities.md) - LSP features and diagnostic codes
 - [Integration](docs/integration.md) - maid-runner CLI integration
 - [Performance](docs/performance.md) - Performance specifications
-- [Claude Code](docs/claude-code.md) - Claude Code integration guide
 
 ### Three-Layer Design
 
@@ -119,10 +116,7 @@ maid-lsp/
 │       └── debounce.py       # Async debouncer
 ├── tests/                    # Behavioral tests
 ├── docs/                     # Architecture documentation
-├── manifests/                # MAID manifests (dogfooding)
-├── .claude-plugin/
-│   └── plugin.json           # Claude Code plugin config
-└── .lsp.json                 # LSP server configuration
+└── manifests/                # MAID manifests (dogfooding)
 ```
 
 ## Diagnostic Codes
