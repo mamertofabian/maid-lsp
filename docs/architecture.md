@@ -100,7 +100,7 @@ Support utilities for the server.
                     ↓
 4. Debouncer delays validation (100ms)
                     ↓
-5. MaidRunner executes: maid validate <path> --json-output
+5. MaidRunner executes: maid validate <path> --use-manifest-chain --json-output
                     ↓
 6. Parser converts JSON output to LSP Diagnostics
                     ↓

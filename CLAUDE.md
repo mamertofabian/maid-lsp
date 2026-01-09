@@ -44,7 +44,7 @@ The server has three layers:
 
 **Key design decision**: The server wraps `maid-runner` CLI via subprocess rather than importing modules directly. This keeps validation logic separate and uses CLI output as a stable API contract.
 
-**Document validation flow**: User edits `.manifest.json` → Debouncer delays (100ms) → `maid validate <path> --json-output` → Parse JSON to LSP diagnostics → Push to editor
+**Document validation flow**: User edits `.manifest.json` → Debouncer delays (100ms) → `maid validate <path> --use-manifest-chain --json-output` → Parse JSON to LSP diagnostics → Push to editor
 
 ### Key Modules
 

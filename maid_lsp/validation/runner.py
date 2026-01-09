@@ -45,7 +45,7 @@ class MaidRunner:
     ) -> ValidationResult:
         """Validate a manifest using the maid-runner CLI.
 
-        Executes: maid validate <manifest_path> --validation-mode <mode> --json-output
+        Executes: maid validate <manifest_path> --validation-mode <mode> --use-manifest-chain --json-output
 
         Args:
             manifest_path: Path to the manifest file to validate.
@@ -64,6 +64,7 @@ class MaidRunner:
             str(manifest_path),
             "--validation-mode",
             mode.value,
+            "--use-manifest-chain",
             "--json-output",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,

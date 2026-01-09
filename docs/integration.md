@@ -31,6 +31,7 @@ The MAID LSP server wraps the maid-runner CLI rather than importing its modules 
 ┌─────────────────────────────────────────────────────────┐
 │                    maid-runner CLI                       │
 │  $ maid validate <manifest> --validation-mode impl      │
+│                       --use-manifest-chain               │
 │                       --json-output                      │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -40,13 +41,14 @@ The MAID LSP server wraps the maid-runner CLI rather than importing its modules 
 ### Primary Validation
 
 ```bash
-maid validate <manifest-path> --validation-mode <mode> --json-output
+maid validate <manifest-path> --validation-mode <mode> --use-manifest-chain --json-output
 ```
 
 | Parameter | Values | Description |
 |-----------|--------|-------------|
 | `manifest-path` | Path to manifest | The manifest file to validate |
 | `--validation-mode` | `behavioral`, `implementation` | Validation mode |
+| `--use-manifest-chain` | Flag | Validate using manifest chain (always enabled) |
 | `--json-output` | Flag | Output in JSON format |
 
 ### Supporting Commands
