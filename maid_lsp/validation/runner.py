@@ -35,8 +35,33 @@ class MaidRunner:
                 Defaults to "maid" if not specified.
             timeout: Timeout in seconds for CLI operations. Defaults to 10.0.
         """
-        self.maid_runner_path = maid_runner_path if maid_runner_path is not None else "maid"
+        self.maid_runner_path = (
+            maid_runner_path if maid_runner_path is not None else "maid"
+        )
         self.timeout = timeout
+
+    def _find_project_root(self, manifest_path: Path) -> Path:
+        """Find the project root directory for a manifest file.
+
+        Walks up the path looking for a 'manifests' directory and returns its parent.
+        This handles various manifest locations:
+        - manifests/task-001.manifest.json -> project root
+        - manifests/feature/task-001.manifest.json -> project root
+        - apps/frontend/manifests/task-001.manifest.json -> apps/frontend/
+
+        Args:
+            manifest_path: Path to the manifest file.
+
+        Returns:
+            The project root directory (parent of the 'manifests' directory),
+            or the manifest's parent directory if no 'manifests' directory is found.
+        """
+        # Walk up the path parts looking for 'manifests'
+        for parent in manifest_path.parents:
+            if parent.name == "manifests":
+                return parent.parent
+        # Fallback: use the manifest's parent directory
+        return manifest_path.parent
 
     async def validate(
         self,
@@ -58,6 +83,12 @@ class MaidRunner:
             asyncio.TimeoutError: If the CLI operation times out.
             json.JSONDecodeError: If the CLI output is not valid JSON.
         """
+        # Run from the directory containing the manifests/ folder
+        # This ensures relative paths in the manifest resolve correctly
+        # e.g., if manifest is at apps/frontend/manifests/task-001.manifest.json,
+        # we run from apps/frontend/ so src/... paths resolve correctly
+        cwd = self._find_project_root(manifest_path)
+
         process = await asyncio.create_subprocess_exec(
             self.maid_runner_path,
             "validate",
@@ -68,6 +99,7 @@ class MaidRunner:
             "--json-output",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
+            cwd=cwd,
         )
 
         try:
