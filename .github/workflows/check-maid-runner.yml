@@ -28,16 +28,38 @@ jobs:
       - name: Get current and latest versions
         id: versions
         run: |
+          set -e  # Exit on any error
+
           # Extract current version requirement from pyproject.toml
-          CURRENT_REQ=$(grep -oP 'maid-runner>=\K[0-9]+\.[0-9]+\.[0-9]+' pyproject.toml)
+          CURRENT_REQ=$(grep -oP 'maid-runner>=\K[0-9]+\.[0-9]+\.[0-9]+' pyproject.toml || true)
+          if [ -z "$CURRENT_REQ" ]; then
+            echo "::error::Failed to extract current maid-runner version from pyproject.toml"
+            exit 1
+          fi
           echo "current=$CURRENT_REQ" >> $GITHUB_OUTPUT
 
-          # Get latest version from PyPI
-          LATEST=$(curl -s https://pypi.org/pypi/maid-runner/json | python3 -c "import sys, json; print(json.load(sys.stdin)['info']['version'])")
+          # Get latest version from PyPI with validation
+          PYPI_RESPONSE=$(curl -sf https://pypi.org/pypi/maid-runner/json) || {
+            echo "::error::Failed to fetch maid-runner info from PyPI"
+            exit 1
+          }
+          LATEST=$(echo "$PYPI_RESPONSE" | python3 -c "import sys, json; print(json.load(sys.stdin)['info']['version'])" 2>/dev/null) || {
+            echo "::error::Failed to parse PyPI JSON response"
+            exit 1
+          }
+          # Validate version format (semver)
+          if ! echo "$LATEST" | grep -qP '^[0-9]+\.[0-9]+\.[0-9]+'; then
+            echo "::error::Invalid version format from PyPI: $LATEST"
+            exit 1
+          fi
           echo "latest=$LATEST" >> $GITHUB_OUTPUT
 
           # Get current maid-lsp version
-          CURRENT_LSP_VERSION=$(grep -oP '__version__ = "\K[0-9]+\.[0-9]+\.[0-9]+' maid_lsp/__init__.py)
+          CURRENT_LSP_VERSION=$(grep -oP '__version__ = "\K[0-9]+\.[0-9]+\.[0-9]+' maid_lsp/__init__.py || true)
+          if [ -z "$CURRENT_LSP_VERSION" ]; then
+            echo "::error::Failed to extract current maid-lsp version from __init__.py"
+            exit 1
+          fi
           echo "current_lsp=$CURRENT_LSP_VERSION" >> $GITHUB_OUTPUT
 
           # Calculate new patch version
@@ -80,7 +102,7 @@ jobs:
           CURRENT_LSP: ${{ steps.versions.outputs.current_lsp }}
           NEW_LSP: ${{ steps.versions.outputs.new_lsp }}
         run: |
-          TODAY=$(date +%Y-%m-%d)
+          set -e
 
           # Update pyproject.toml
           sed -i "s/maid-runner>=${CURRENT}/maid-runner>=${LATEST}/" pyproject.toml
@@ -93,29 +115,27 @@ jobs:
           python3 << 'PYTHON_SCRIPT'
           import os
           import re
+          import textwrap
+          import subprocess
 
           current = os.environ['CURRENT']
           latest = os.environ['LATEST']
           current_lsp = os.environ['CURRENT_LSP']
           new_lsp = os.environ['NEW_LSP']
-          today = os.environ.get('TODAY', '2025-01-01')
 
-          # Read file - use environment variable for TODAY
-          import subprocess
           today = subprocess.check_output(['date', '+%Y-%m-%d']).decode().strip()
 
           with open('CHANGELOG.md', 'r') as f:
               content = f.read()
 
           # Create new changelog entry
-          new_entry = f'''## [{new_lsp}] - {today}
+          new_entry = textwrap.dedent(f'''\
+              ## [{new_lsp}] - {today}
 
-          ### Changed
-          - Bump maid-runner dependency from >={current} to >={latest}
+              ### Changed
+              - Bump maid-runner dependency from >={current} to >={latest}
 
-          '''
-          # Dedent the entry (remove leading spaces from each line)
-          new_entry = '\n'.join(line.lstrip() for line in new_entry.split('\n'))
+              ''')
 
           # Insert after [Unreleased] section
           content = re.sub(
@@ -131,7 +151,7 @@ jobs:
               content
           )
 
-          # Add new version comparison link
+          # Add new version comparison link after [Unreleased] link
           new_link = f'[{new_lsp}]: https://github.com/mamertofabian/maid-lsp/compare/v{current_lsp}...v{new_lsp}'
           content = re.sub(
               r'(\[Unreleased\]: .*\n)',
