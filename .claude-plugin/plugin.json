@@ -1,6 +1,6 @@
 {
   "name": "maid-lsp",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "MAID methodology validation for Claude Code - provides real-time manifest validation, diagnostics, and code actions",
   "author": {
     "name": "Mamerto Fabian",
@@ -15,7 +15,7 @@
       "command": "maid-lsp",
       "args": ["--stdio"],
       "extensionToLanguage": {
-        ".json": "json"
+        ".manifest.json": "json"
       }
     }
   }
