@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-01-10
+
+### Fixed
+- Informational diagnostics (I103) now correctly display as informational messages instead of errors
+- Diagnostic codes starting with "I" are now properly mapped to Information severity level
+
 ## [0.1.6] - 2026-01-10
 
 ### Fixed
@@ -47,7 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Debouncing for document changes (100ms delay)
 - Support for VS Code, JetBrains IDEs, and Claude Code
 
-[Unreleased]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.6...HEAD
+[Unreleased]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.7...HEAD
+[0.1.7]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.3...v0.1.4
