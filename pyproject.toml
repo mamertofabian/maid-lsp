@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "maid-lsp"
-version = "0.1.8"
+version = "0.1.9"
 description = "Language Server Protocol implementation for MAID methodology validation"
 readme = "README.md"
 license = { text = "MIT" }
@@ -30,7 +30,7 @@ classifiers = [
 dependencies = [
     "pygls>=1.3.0",
     "lsprotocol>=2023.0.1",
-    "maid-runner>=0.9.3",
+    "maid-runner>=0.9.4",
 ]
 
 [project.optional-dependencies]
