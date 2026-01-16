@@ -88,7 +88,7 @@ class ReferencesHandler:
                 references.extend(await self._find_in_source(word, artifact_info))
         else:
             # Find artifact info from source file
-            artifact_info = self._get_artifact_info_from_source(document, file_path, word)
+            artifact_info = self._get_artifact_info_from_source(file_path, word)
             if artifact_info:
                 # Find references in manifests
                 references.extend(await self._find_in_manifests(word, artifact_info))
@@ -193,15 +193,12 @@ class ReferencesHandler:
         for manifest_path in manifests_to_parse:
             try:
                 with open(manifest_path, encoding="utf-8") as f:
-                    manifest_content = f.read()
-                manifest = json.loads(manifest_content)
+                    f.read()  # Verify file is readable
             except (OSError, json.JSONDecodeError):
                 continue
 
             # Find artifact references in this manifest
-            manifest_refs = self._find_artifact_references_in_manifest(
-                manifest, manifest_path, artifact_name
-            )
+            manifest_refs = self._find_artifact_references_in_manifest(manifest_path, artifact_name)
             references.extend(manifest_refs)
 
         return references
@@ -476,14 +473,12 @@ class ReferencesHandler:
 
     def _find_artifact_references_in_manifest(
         self,
-        manifest: dict,  # noqa: ARG002
         manifest_path: Path,
         artifact_name: str,
     ) -> list[Location]:
         """Find all references to an artifact in a manifest file.
 
         Args:
-            manifest: The parsed manifest dictionary.
             manifest_path: Path to the manifest file.
             artifact_name: Name of the artifact to find.
 
@@ -669,14 +664,12 @@ class ReferencesHandler:
 
     def _get_artifact_info_from_source(
         self,
-        document: TextDocument,  # noqa: ARG002
         source_path: Path,
         artifact_name: str,
     ) -> dict | None:
         """Get artifact information from a source file.
 
         Args:
-            document: The source file document.
             source_path: Path to the source file.
             artifact_name: Name of the artifact.
 

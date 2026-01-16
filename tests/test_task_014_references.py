@@ -235,12 +235,7 @@ class TestReferencesHandlerUtilityMethods:
             source_path = Path(source_file.name)
 
         try:
-            document = MagicMock(spec=TextDocument)
-            document.source = "def my_function():\n    pass\n"
-
-            artifact_info = handler._get_artifact_info_from_source(
-                document, source_path, "my_function"
-            )
+            artifact_info = handler._get_artifact_info_from_source(source_path, "my_function")
 
             assert artifact_info is not None
             assert artifact_info["type"] == "function"
