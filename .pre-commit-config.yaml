@@ -3,30 +3,40 @@
 # Run manually with: make pre-commit
 #
 # Hooks run in order:
-# 1. Format code with black
-# 2. Lint with ruff (with auto-fix)
+# 1. Format code with black (via uv)
+# 2. Lint with ruff (via uv, with auto-fix)
 # 3. Validate changed manifests with maid validate
 # 4. Run maid test (all validation commands)
 
 repos:
-  # Format code with black
-  - repo: https://github.com/psf/black
-    rev: 24.10.0
+  # Format code with black (using local uv installation)
+  - repo: local
     hooks:
       - id: black
-        language_version: python3
-        args: ["--line-length=100"]
+        name: black
+        entry: bash -c 'cd "$(git rev-parse --show-toplevel)" && uv run black --line-length=100 "$@"' --
+        language: system
+        types: [python]
         files: ^(maid_lsp|tests|scripts)/.*\.py$
+        pass_filenames: true
 
-  # Lint with ruff
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.4
+  # Lint with ruff (using local uv installation)
+  - repo: local
     hooks:
       - id: ruff
-        args: ["--fix", "--exit-non-zero-on-fix"]
+        name: ruff
+        entry: bash -c 'cd "$(git rev-parse --show-toplevel)" && uv run ruff check --fix --exit-non-zero-on-fix "$@"' --
+        language: system
+        types: [python]
         files: ^(maid_lsp|tests|scripts)/.*\.py$
+        pass_filenames: true
       - id: ruff-format
+        name: ruff-format
+        entry: bash -c 'cd "$(git rev-parse --show-toplevel)" && uv run ruff format "$@"' --
+        language: system
+        types: [python]
         files: ^(maid_lsp|tests|scripts)/.*\.py$
+        pass_filenames: true
 
   # Validate manifests with maid (only changed manifest files)
   - repo: local
