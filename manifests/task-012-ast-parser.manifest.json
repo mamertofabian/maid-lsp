@@ -1,0 +1,67 @@
+{
+  "goal": "Create AST parsing utilities in maid_lsp/utils/ast_parser.py for finding artifact definitions in Python source files",
+  "taskType": "create",
+  "creatableFiles": ["maid_lsp/utils/ast_parser.py"],
+  "readonlyFiles": [],
+  "expectedArtifacts": {
+    "file": "maid_lsp/utils/ast_parser.py",
+    "contains": [
+      {
+        "type": "class",
+        "name": "ArtifactLocation",
+        "description": "Represents the location of an artifact in a source file"
+      },
+      {
+        "type": "function",
+        "name": "parse_file",
+        "args": [
+          {"name": "file_path", "type": "Path"}
+        ],
+        "returns": {"type": "ast.Module | None"}
+      },
+      {
+        "type": "function",
+        "name": "find_function_definition",
+        "args": [
+          {"name": "tree", "type": "ast.Module"},
+          {"name": "name", "type": "str"},
+          {"name": "class_name", "type": "str | None"},
+          {"name": "file_path", "type": "Path | None"}
+        ],
+        "returns": {"type": "ArtifactLocation | None"}
+      },
+      {
+        "type": "function",
+        "name": "find_class_definition",
+        "args": [
+          {"name": "tree", "type": "ast.Module"},
+          {"name": "name", "type": "str"},
+          {"name": "file_path", "type": "Path | None"}
+        ],
+        "returns": {"type": "ArtifactLocation | None"}
+      },
+      {
+        "type": "function",
+        "name": "find_attribute_definition",
+        "args": [
+          {"name": "tree", "type": "ast.Module"},
+          {"name": "name", "type": "str"},
+          {"name": "file_path", "type": "Path | None"}
+        ],
+        "returns": {"type": "ArtifactLocation | None"}
+      },
+      {
+        "type": "function",
+        "name": "find_artifact_definition",
+        "args": [
+          {"name": "file_path", "type": "Path"},
+          {"name": "artifact_type", "type": "str"},
+          {"name": "artifact_name", "type": "str"},
+          {"name": "class_name", "type": "str | None"}
+        ],
+        "returns": {"type": "ArtifactLocation | None"}
+      }
+    ]
+  },
+  "validationCommand": ["pytest", "tests/test_task_012_ast_parser.py", "-v"]
+}
