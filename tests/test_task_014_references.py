@@ -265,3 +265,124 @@ class TestReferencesHandlerUtilityMethods:
 
         uri = handler._path_to_uri(Path("/path/to/file.py"))
         assert uri.startswith("file://")
+
+
+class TestReferencesHandlerExtractTestFiles:
+    """Test ReferencesHandler._extract_test_files_from_command method."""
+
+    def test_extracts_test_file_from_pytest_command(self) -> None:
+        """_extract_test_files_from_command should extract test file from pytest command."""
+        handler = ReferencesHandler()
+
+        with TemporaryDirectory() as tmpdir:
+            test_file = Path(tmpdir) / "tests" / "test_example.py"
+            test_file.parent.mkdir()
+            test_file.write_text("# test file\n")
+
+            validation_command = ["pytest", "tests/test_example.py", "-v"]
+            workspace_root = Path(tmpdir)
+
+            result = handler._extract_test_files_from_command(validation_command, workspace_root)
+
+            assert len(result) == 1
+            assert result[0] == test_file.resolve()
+
+    def test_extracts_test_file_with_glob_pattern(self) -> None:
+        """_extract_test_files_from_command should handle glob patterns."""
+        handler = ReferencesHandler()
+
+        with TemporaryDirectory() as tmpdir:
+            tests_dir = Path(tmpdir) / "tests"
+            tests_dir.mkdir()
+            test_file1 = tests_dir / "test_one.py"
+            test_file2 = tests_dir / "test_two.py"
+            test_file1.write_text("# test file 1\n")
+            test_file2.write_text("# test file 2\n")
+
+            validation_command = ["pytest", "tests/test_*.py", "-v"]
+            workspace_root = Path(tmpdir)
+
+            result = handler._extract_test_files_from_command(validation_command, workspace_root)
+
+            assert len(result) >= 1
+            assert all(f.exists() for f in result)
+
+    def test_skips_non_test_arguments(self) -> None:
+        """_extract_test_files_from_command should skip command names and flags."""
+        handler = ReferencesHandler()
+
+        validation_command = ["pytest", "-v", "--verbose", "pytest", "uv", "run"]
+        workspace_root = Path.cwd()
+
+        result = handler._extract_test_files_from_command(validation_command, workspace_root)
+
+        # Should not include command names or flags
+        assert len(result) == 0
+
+    def test_handles_empty_command(self) -> None:
+        """_extract_test_files_from_command should handle empty command."""
+        handler = ReferencesHandler()
+
+        result = handler._extract_test_files_from_command([], Path.cwd())
+
+        assert result == []
+
+    def test_handles_invalid_command(self) -> None:
+        """_extract_test_files_from_command should handle invalid command."""
+        handler = ReferencesHandler()
+
+        result = handler._extract_test_files_from_command("not a list", Path.cwd())
+
+        assert result == []
+
+
+class TestReferencesHandlerFindInTests:
+    """Test ReferencesHandler._find_in_tests method with validationCommand."""
+
+    @pytest.mark.asyncio
+    async def test_uses_validation_command_from_manifest(self) -> None:
+        """_find_in_tests should use validationCommand from current manifest."""
+        handler = ReferencesHandler()
+
+        with TemporaryDirectory() as tmpdir:
+            manifest_dir = Path(tmpdir) / "manifests"
+            manifest_dir.mkdir()
+            tests_dir = Path(tmpdir) / "tests"
+            tests_dir.mkdir()
+
+            # Create test file
+            test_file = tests_dir / "test_task_001.py"
+            test_file.write_text("def test_my_function():\n    from src.module import my_function\n    assert my_function() is not None\n")
+
+            # Create manifest with validationCommand
+            manifest_content = {
+                "goal": "Test",
+                "expectedArtifacts": {
+                    "file": "src/module.py",
+                    "contains": [{"type": "function", "name": "my_function"}],
+                },
+                "validationCommand": ["pytest", "tests/test_task_001.py", "-v"],
+            }
+
+            manifest_path = manifest_dir / "task-001.manifest.json"
+            with open(manifest_path, "w") as f:
+                json.dump(manifest_content, f)
+
+            document = MagicMock(spec=TextDocument)
+            document.source = json.dumps(manifest_content)
+            document.lines = document.source.split("\n")
+
+            artifact_info = {"type": "function", "name": "my_function"}
+
+            import os
+            original_cwd = os.getcwd()
+            try:
+                os.chdir(tmpdir)
+                result = await handler._find_in_tests(
+                    "my_function", artifact_info, document, manifest_path
+                )
+                assert isinstance(result, list)
+                # Should find references in the test file from validationCommand
+                assert len(result) > 0
+            finally:
+                os.chdir(original_cwd)

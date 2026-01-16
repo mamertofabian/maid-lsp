@@ -169,8 +169,19 @@ class DefinitionHandler:
             return None
 
         # Find manifests that reference this file
+        # Convert absolute path to relative path for maid manifests command
+        # (maid manifests works better with relative paths)
         try:
-            manifests = await self.runner.find_manifests(source_path)
+            # Try to get relative path from current working directory
+            if source_path.is_absolute():
+                try:
+                    relative_path = source_path.relative_to(Path.cwd())
+                    manifests = await self.runner.find_manifests(relative_path)
+                except ValueError:
+                    # If path is not relative to cwd, try absolute path
+                    manifests = await self.runner.find_manifests(source_path)
+            else:
+                manifests = await self.runner.find_manifests(source_path)
         except Exception:
             return None
 
@@ -183,7 +194,7 @@ class DefinitionHandler:
                 with open(manifest_path, encoding="utf-8") as f:
                     manifest_content = f.read()
                 manifest = json.loads(manifest_content)
-            except (OSError, json.JSONDecodeError):
+            except (OSError, json.JSONDecodeError) as e:
                 continue
 
             # Check if this manifest defines the artifact
@@ -213,6 +224,16 @@ class DefinitionHandler:
         if not isinstance(contains, list):
             return None
 
+        # First verify the artifact exists in the manifest
+        artifact_found = False
+        for artifact in contains:
+            if isinstance(artifact, dict) and artifact.get("name") == artifact_name:
+                artifact_found = True
+                break
+
+        if not artifact_found:
+            return None
+
         # Read manifest file to find line numbers
         try:
             with open(manifest_path, encoding="utf-8") as f:
@@ -221,15 +242,17 @@ class DefinitionHandler:
             return None
 
         # Search for artifact name in manifest content
+        # Escape special regex characters in artifact name
+        pattern = rf'["\']{re.escape(artifact_name)}["\']'
         for line_num, line in enumerate(lines):
             # Look for the artifact name in quotes (JSON format)
-            pattern = rf'["\']{re.escape(artifact_name)}["\']'
             match = re.search(pattern, line)
             if match:
                 # Check if this is actually in the "name" field of an artifact
-                # Simple heuristic: look for "name" field before this line
-                before_text = "".join(lines[max(0, line_num - 5) : line_num])
-                if '"name"' in before_text or "'name'" in before_text:
+                # Look for "name" field before the artifact name on the same line
+                line_before_match = line[:match.start()]
+                # Check for "name": pattern (with colon) before the match
+                if '"name"' in line_before_match or "'name'" in line_before_match:
                     column = match.start()
                     end_column = match.end()
                     return Location(
