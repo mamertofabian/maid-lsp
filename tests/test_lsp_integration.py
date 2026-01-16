@@ -6,8 +6,6 @@ real LSP protocol behavior with actual manifest files.
 
 import asyncio
 import json
-import subprocess
-import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -105,7 +103,9 @@ class LSPTestClient:
                 position=Position(
                     line=params["position"]["line"], character=params["position"]["character"]
                 ),
-                context={"includeDeclaration": params.get("context", {}).get("includeDeclaration", True)},
+                context={
+                    "includeDeclaration": params.get("context", {}).get("includeDeclaration", True)
+                },
             )
             return await self.server.references_handler.get_references(ref_params, doc)
 
@@ -114,40 +114,22 @@ class LSPTestClient:
     async def _handle_notification(self, method: str, params: dict[str, Any]) -> None:
         """Handle notification by calling server handlers directly."""
         if method == "textDocument/didOpen":
-            from lsprotocol.types import DidOpenTextDocumentParams, TextDocumentItem
-
             uri = params["textDocument"]["uri"]
             text = params["textDocument"]["text"]
             # Store document content
             self.documents[uri] = text
-
-            open_params = DidOpenTextDocumentParams(
-                text_document=TextDocumentItem(
-                    uri=uri,
-                    language_id=params["textDocument"].get("languageId", "json"),
-                    version=params["textDocument"].get("version", 1),
-                    text=text,
-                )
-            )
             await self.server.diagnostics_handler.validate_and_publish(self.server, uri)
         elif method == "textDocument/didChange":
-            from lsprotocol.types import DidChangeTextDocumentParams, TextDocumentIdentifier, VersionedTextDocumentIdentifier
-
             uri = params["textDocument"]["uri"]
             # Update document content from changes
             content_changes = params.get("contentChanges", [])
-            if content_changes:
+            if (
+                content_changes
+                and isinstance(content_changes[0], dict)
+                and "text" in content_changes[0]
+            ):
                 # For simplicity, assume full document replacement
-                if isinstance(content_changes[0], dict) and "text" in content_changes[0]:
-                    self.documents[uri] = content_changes[0]["text"]
-
-            change_params = DidChangeTextDocumentParams(
-                text_document=VersionedTextDocumentIdentifier(
-                    uri=uri,
-                    version=params["textDocument"].get("version", 1),
-                ),
-                content_changes=content_changes,
-            )
+                self.documents[uri] = content_changes[0]["text"]
             await self.server.diagnostics_handler.validate_and_publish(self.server, uri)
 
 
@@ -252,9 +234,7 @@ class TestLSPIntegration:
         # This is expected behavior
         assert hover_result is None or isinstance(hover_result, dict)
 
-    async def test_definition_lookup(
-        self, client: LSPTestClient, sample_manifest: Path
-    ) -> None:
+    async def test_definition_lookup(self, client: LSPTestClient, sample_manifest: Path) -> None:
         """Test go-to-definition functionality."""
         uri = f"file://{sample_manifest}"
         content = sample_manifest.read_text()
@@ -284,11 +264,9 @@ class TestLSPIntegration:
         )
 
         # Definition might be None if position doesn't have a definition
-        assert definition_result is None or isinstance(definition_result, (dict, list))
+        assert definition_result is None or isinstance(definition_result, dict | list)
 
-    async def test_references_lookup(
-        self, client: LSPTestClient, sample_manifest: Path
-    ) -> None:
+    async def test_references_lookup(self, client: LSPTestClient, sample_manifest: Path) -> None:
         """Test find-references functionality."""
         uri = f"file://{sample_manifest}"
         content = sample_manifest.read_text()
@@ -336,12 +314,12 @@ class TestLSPWithRealManifests:
         """Create a test client."""
         return LSPTestClient(server)
 
-    async def test_validate_existing_manifest(
-        self, client: LSPTestClient
-    ) -> None:
+    async def test_validate_existing_manifest(self, client: LSPTestClient) -> None:
         """Test validation with an actual project manifest."""
         # Use an existing manifest from the project
-        manifest_path = Path(__file__).parent.parent / "manifests" / "task-001-package-init.manifest.json"
+        manifest_path = (
+            Path(__file__).parent.parent / "manifests" / "task-001-package-init.manifest.json"
+        )
 
         if not manifest_path.exists():
             pytest.skip("Manifest file not found")

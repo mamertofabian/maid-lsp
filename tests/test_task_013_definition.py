@@ -8,10 +8,9 @@ and source files.
 import json
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-
 from lsprotocol.types import DefinitionParams, Position, TextDocumentIdentifier
 from pygls.workspace import TextDocument
 
@@ -61,7 +60,7 @@ class TestDefinitionHandlerInit:
         result = handler.get_definition(params, document)
 
         # Result can be None if not on an artifact, which is acceptable
-        assert result is None or isinstance(result, (list, type(None)))
+        assert result is None or isinstance(result, list | type(None))
 
 
 class TestDefinitionHandlerGetDefinitionFromManifest:
@@ -270,7 +269,9 @@ class TestDefinitionHandlerPathResolution:
         handler = DefinitionHandler()
 
         # Create temporary directory structure
-        with NamedTemporaryFile(mode="w", suffix=".manifest.json", delete=False, dir="/tmp") as manifest_file:
+        with NamedTemporaryFile(
+            mode="w", suffix=".manifest.json", delete=False, dir="/tmp"
+        ) as manifest_file:
             manifest_path = Path(manifest_file.name)
 
         # Create source file relative to manifest

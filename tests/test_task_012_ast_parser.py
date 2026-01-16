@@ -179,9 +179,7 @@ class TestFindArtifactDefinition:
             file_path = Path(f.name)
 
         try:
-            location = find_artifact_definition(
-                file_path, "function", "my_function", None
-            )
+            location = find_artifact_definition(file_path, "function", "my_function", None)
 
             assert location is not None
             assert isinstance(location, ArtifactLocation)
@@ -209,9 +207,7 @@ class TestFindArtifactDefinition:
             file_path = Path(f.name)
 
         try:
-            location = find_artifact_definition(
-                file_path, "attribute", "__version__", None
-            )
+            location = find_artifact_definition(file_path, "attribute", "__version__", None)
 
             assert location is not None
             assert isinstance(location, ArtifactLocation)
@@ -225,9 +221,7 @@ class TestFindArtifactDefinition:
             file_path = Path(f.name)
 
         try:
-            location = find_artifact_definition(
-                file_path, "function", "my_method", "MyClass"
-            )
+            location = find_artifact_definition(file_path, "function", "my_method", "MyClass")
 
             assert location is not None
             assert isinstance(location, ArtifactLocation)
@@ -247,9 +241,7 @@ class TestFindArtifactDefinition:
             file_path = Path(f.name)
 
         try:
-            location = find_artifact_definition(
-                file_path, "unknown", "my_function", None
-            )
+            location = find_artifact_definition(file_path, "unknown", "my_function", None)
 
             assert location is None
         finally:

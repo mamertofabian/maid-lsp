@@ -31,8 +31,6 @@ async def test_manifest(manifest_path: Path) -> None:
     captured_diagnostics = []
 
     # Override publish_diagnostics to capture diagnostics
-    original_publish = server.text_document_publish_diagnostics
-
     def capture_publish(params):
         captured_diagnostics.append(params)
         # Don't call original since server isn't fully initialized
@@ -57,7 +55,9 @@ async def test_manifest(manifest_path: Path) -> None:
         for diag in diags[:5]:  # Show first 5
             print(f"   - {diag.code}: {diag.message}")
             if diag.range:
-                print(f"     At line {diag.range.start.line + 1}, col {diag.range.start.character + 1}")
+                print(
+                    f"     At line {diag.range.start.line + 1}, col {diag.range.start.character + 1}"
+                )
     else:
         print("   ⚠️  No diagnostics published (file may be valid or validation not triggered)")
 
@@ -114,7 +114,7 @@ async def test_manifest(manifest_path: Path) -> None:
                 break
         except Exception as e:
             print(f"   ⚠️  Hover test error on '{artifact_name}': {e}")
-    
+
     if not hover_found and artifact_positions:
         print(f"   ⚠️  No hover info found (tested {len(artifact_positions)} artifact positions)")
 
@@ -133,17 +133,21 @@ async def test_manifest(manifest_path: Path) -> None:
             if def_result:
                 def_found = True
                 if isinstance(def_result, list):
-                    print(f"   ✅ Definition for '{artifact_name}' (line {line_num + 1}): Found {len(def_result)} location(s)")
+                    print(
+                        f"   ✅ Definition for '{artifact_name}' (line {line_num + 1}): Found {len(def_result)} location(s)"
+                    )
                     for loc in def_result[:3]:
                         file_path = Path(loc.uri.replace("file://", ""))
                         print(f"     - {file_path.name}:{loc.range.start.line + 1}")
                 else:
                     file_path = Path(def_result.uri.replace("file://", ""))
-                    print(f"   ✅ Definition for '{artifact_name}' (line {line_num + 1}): {file_path.name}:{def_result.range.start.line + 1}")
+                    print(
+                        f"   ✅ Definition for '{artifact_name}' (line {line_num + 1}): {file_path.name}:{def_result.range.start.line + 1}"
+                    )
                 break
         except Exception as e:
             print(f"   ⚠️  Definition test error on '{artifact_name}': {e}")
-    
+
     if not def_found and artifact_positions:
         print(f"   ⚠️  No definition found (tested {len(artifact_positions)} artifact positions)")
 
@@ -162,19 +166,21 @@ async def test_manifest(manifest_path: Path) -> None:
             ref_result = await server.references_handler.get_references(ref_params, doc)
             if ref_result:
                 ref_found = True
-                print(f"   ✅ References for '{artifact_name}' (line {line_num + 1}): Found {len(ref_result)} reference(s)")
+                print(
+                    f"   ✅ References for '{artifact_name}' (line {line_num + 1}): Found {len(ref_result)} reference(s)"
+                )
                 for ref in ref_result[:5]:  # Show first 5
                     file_path = Path(ref.uri.replace("file://", ""))
                     print(f"     - {file_path.name}:{ref.range.start.line + 1}")
                 break
         except Exception as e:
             print(f"   ⚠️  References test error on '{artifact_name}': {e}")
-    
+
     if not ref_found and artifact_positions:
         print(f"   ⚠️  No references found (tested {len(artifact_positions)} artifact positions)")
 
     print("\n✅ Testing complete!")
-    
+
     # Summary
     print("\n📊 Summary:")
     print(f"   - Diagnostics: {'✅ Published' if captured_diagnostics else '⚠️  None'}")

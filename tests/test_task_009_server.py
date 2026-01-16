@@ -200,10 +200,10 @@ class TestHandlerRegistration:
     def test_register_handlers_called(self) -> None:
         """_register_handlers should be callable to register LSP handlers."""
         server = MaidLanguageServer(name="test-server", version="0.0.1")
-        
+
         # Call _register_handlers to satisfy behavioral validation
         _register_handlers(server)
-        
+
         # Verify handlers were registered
         handlers = _get_registered_handlers(server)
         assert len(handlers) > 0
@@ -237,9 +237,7 @@ class TestServerIntegration:
         ]
 
         for handler_name in required_handlers:
-            assert (
-                handler_name in handlers
-            ), f"Required handler {handler_name} not registered"
+            assert handler_name in handlers, f"Required handler {handler_name} not registered"
 
 
 def _get_registered_handlers(server: LanguageServer) -> dict:

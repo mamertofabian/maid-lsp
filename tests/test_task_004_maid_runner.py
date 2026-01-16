@@ -62,12 +62,7 @@ class TestMaidRunnerValidate:
         manifest_path = Path("/path/to/test.manifest.json")
 
         # Mock successful CLI output
-        mock_output = json.dumps({
-            "success": True,
-            "errors": [],
-            "warnings": [],
-            "metadata": {}
-        })
+        mock_output = json.dumps({"success": True, "errors": [], "warnings": [], "metadata": {}})
 
         mock_process = AsyncMock()
         mock_process.communicate = AsyncMock(return_value=(mock_output.encode(), b""))
@@ -84,12 +79,7 @@ class TestMaidRunnerValidate:
         runner = MaidRunner()
         manifest_path = Path("/path/to/test.manifest.json")
 
-        mock_output = json.dumps({
-            "success": True,
-            "errors": [],
-            "warnings": [],
-            "metadata": {}
-        })
+        mock_output = json.dumps({"success": True, "errors": [], "warnings": [], "metadata": {}})
 
         mock_process = AsyncMock()
         mock_process.communicate = AsyncMock(return_value=(mock_output.encode(), b""))
@@ -113,12 +103,7 @@ class TestMaidRunnerValidate:
         runner = MaidRunner()
         manifest_path = Path("/path/to/test.manifest.json")
 
-        mock_output = json.dumps({
-            "success": True,
-            "errors": [],
-            "warnings": [],
-            "metadata": {}
-        })
+        mock_output = json.dumps({"success": True, "errors": [], "warnings": [], "metadata": {}})
 
         mock_process = AsyncMock()
         mock_process.communicate = AsyncMock(return_value=(mock_output.encode(), b""))
@@ -141,12 +126,9 @@ class TestMaidRunnerValidate:
         runner = MaidRunner()
         manifest_path = Path("/path/to/valid.manifest.json")
 
-        mock_output = json.dumps({
-            "success": True,
-            "errors": [],
-            "warnings": [],
-            "metadata": {"duration_ms": 50}
-        })
+        mock_output = json.dumps(
+            {"success": True, "errors": [], "warnings": [], "metadata": {"duration_ms": 50}}
+        )
 
         mock_process = AsyncMock()
         mock_process.communicate = AsyncMock(return_value=(mock_output.encode(), b""))
@@ -164,21 +146,23 @@ class TestMaidRunnerValidate:
         runner = MaidRunner()
         manifest_path = Path("/path/to/invalid.manifest.json")
 
-        mock_output = json.dumps({
-            "success": False,
-            "errors": [
-                {
-                    "code": "E001",
-                    "message": "Missing required field",
-                    "file": "/path/to/invalid.manifest.json",
-                    "line": 5,
-                    "column": 1,
-                    "severity": "error"
-                }
-            ],
-            "warnings": [],
-            "metadata": {}
-        })
+        mock_output = json.dumps(
+            {
+                "success": False,
+                "errors": [
+                    {
+                        "code": "E001",
+                        "message": "Missing required field",
+                        "file": "/path/to/invalid.manifest.json",
+                        "line": 5,
+                        "column": 1,
+                        "severity": "error",
+                    }
+                ],
+                "warnings": [],
+                "metadata": {},
+            }
+        )
 
         mock_process = AsyncMock()
         mock_process.communicate = AsyncMock(return_value=(mock_output.encode(), b""))
@@ -197,21 +181,23 @@ class TestMaidRunnerValidate:
         runner = MaidRunner()
         manifest_path = Path("/path/to/test.manifest.json")
 
-        mock_output = json.dumps({
-            "success": True,
-            "errors": [],
-            "warnings": [
-                {
-                    "code": "W001",
-                    "message": "Deprecated field",
-                    "file": "/path/to/test.manifest.json",
-                    "line": 10,
-                    "column": 5,
-                    "severity": "warning"
-                }
-            ],
-            "metadata": {}
-        })
+        mock_output = json.dumps(
+            {
+                "success": True,
+                "errors": [],
+                "warnings": [
+                    {
+                        "code": "W001",
+                        "message": "Deprecated field",
+                        "file": "/path/to/test.manifest.json",
+                        "line": 10,
+                        "column": 5,
+                        "severity": "warning",
+                    }
+                ],
+                "metadata": {},
+            }
+        )
 
         mock_process = AsyncMock()
         mock_process.communicate = AsyncMock(return_value=(mock_output.encode(), b""))
@@ -230,12 +216,14 @@ class TestMaidRunnerValidate:
         runner = MaidRunner()
         manifest_path = Path("/path/to/test.manifest.json")
 
-        mock_output = json.dumps({
-            "success": True,
-            "errors": [],
-            "warnings": [],
-            "metadata": {"duration_ms": 150, "version": "1.0.0"}
-        })
+        mock_output = json.dumps(
+            {
+                "success": True,
+                "errors": [],
+                "warnings": [],
+                "metadata": {"duration_ms": 150, "version": "1.0.0"},
+            }
+        )
 
         mock_process = AsyncMock()
         mock_process.communicate = AsyncMock(return_value=(mock_output.encode(), b""))
@@ -253,12 +241,7 @@ class TestMaidRunnerValidate:
         runner = MaidRunner()
         manifest_path = Path("/specific/path/to/manifest.json")
 
-        mock_output = json.dumps({
-            "success": True,
-            "errors": [],
-            "warnings": [],
-            "metadata": {}
-        })
+        mock_output = json.dumps({"success": True, "errors": [], "warnings": [], "metadata": {}})
 
         mock_process = AsyncMock()
         mock_process.communicate = AsyncMock(return_value=(mock_output.encode(), b""))
@@ -301,12 +284,7 @@ class TestMaidRunnerValidateTimeout:
         runner = MaidRunner(timeout=custom_timeout)
         manifest_path = Path("/path/to/test.manifest.json")
 
-        mock_output = json.dumps({
-            "success": True,
-            "errors": [],
-            "warnings": [],
-            "metadata": {}
-        })
+        mock_output = json.dumps({"success": True, "errors": [], "warnings": [], "metadata": {}})
 
         mock_process = AsyncMock()
         mock_process.communicate = AsyncMock(return_value=(mock_output.encode(), b""))
@@ -348,12 +326,7 @@ class TestMaidRunnerValidateErrorHandling:
         runner = MaidRunner()
         manifest_path = Path("/path/to/test.manifest.json")
 
-        mock_output = json.dumps({
-            "success": False,
-            "errors": [],
-            "warnings": [],
-            "metadata": {}
-        })
+        mock_output = json.dumps({"success": False, "errors": [], "warnings": [], "metadata": {}})
 
         mock_process = AsyncMock()
         mock_process.communicate = AsyncMock(
@@ -376,10 +349,9 @@ class TestMaidRunnerFindManifests:
         runner = MaidRunner()
         file_path = Path("/path/to/source/file.py")
 
-        mock_output = json.dumps([
-            "/path/to/task-001.manifest.json",
-            "/path/to/task-002.manifest.json"
-        ])
+        mock_output = json.dumps(
+            ["/path/to/task-001.manifest.json", "/path/to/task-002.manifest.json"]
+        )
 
         mock_process = AsyncMock()
         mock_process.communicate = AsyncMock(return_value=(mock_output.encode(), b""))
@@ -481,12 +453,7 @@ class TestMaidRunnerCustomPath:
         runner = MaidRunner(maid_runner_path=custom_path)
         manifest_path = Path("/path/to/test.manifest.json")
 
-        mock_output = json.dumps({
-            "success": True,
-            "errors": [],
-            "warnings": [],
-            "metadata": {}
-        })
+        mock_output = json.dumps({"success": True, "errors": [], "warnings": [], "metadata": {}})
 
         mock_process = AsyncMock()
         mock_process.communicate = AsyncMock(return_value=(mock_output.encode(), b""))

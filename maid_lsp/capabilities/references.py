@@ -111,7 +111,7 @@ class ReferencesHandler:
                             manifests = await self.runner.find_manifests(file_path)
                     else:
                         manifests = await self.runner.find_manifests(file_path)
-                    
+
                     # Search manifests for this artifact
                     for manifest_path in manifests:
                         if not manifest_path.exists():
@@ -119,15 +119,18 @@ class ReferencesHandler:
                         try:
                             with open(manifest_path, encoding="utf-8") as f:
                                 manifest_content = f.read()
-                            manifest = json.loads(manifest_content)
                             artifact_info = self._get_artifact_info_from_manifest(
                                 TextDocument(f"file://{manifest_path}", manifest_content), word
                             )
                             if artifact_info:
                                 # Found artifact in manifest, now find all references
-                                references.extend(await self._find_in_manifests(word, artifact_info))
                                 references.extend(
-                                    await self._find_in_tests(word, artifact_info, document, file_path)
+                                    await self._find_in_manifests(word, artifact_info)
+                                )
+                                references.extend(
+                                    await self._find_in_tests(
+                                        word, artifact_info, document, file_path
+                                    )
                                 )
                                 references.extend(await self._find_in_source(word, artifact_info))
                                 break
@@ -140,7 +143,9 @@ class ReferencesHandler:
         return self._deduplicate_locations(references) if references else []
 
     async def _find_in_manifests(
-        self, artifact_name: str, artifact_info: dict
+        self,
+        artifact_name: str,
+        artifact_info: dict,  # noqa: ARG002
     ) -> list[Location]:
         """Find references to artifact in manifest files.
 
@@ -229,7 +234,9 @@ class ReferencesHandler:
             try:
                 manifest = json.loads(document.source)
                 validation_command = manifest.get("validationCommand", [])
-                test_files.update(self._extract_test_files_from_command(validation_command, workspace_root))
+                test_files.update(
+                    self._extract_test_files_from_command(validation_command, workspace_root)
+                )
             except json.JSONDecodeError:
                 pass
         else:
@@ -356,9 +363,7 @@ class ReferencesHandler:
 
         return test_files
 
-    async def _find_in_source(
-        self, artifact_name: str, artifact_info: dict
-    ) -> list[Location]:
+    async def _find_in_source(self, artifact_name: str, artifact_info: dict) -> list[Location]:
         """Find references to artifact in source files.
 
         Optimized to only search relevant directories and use fast text search
@@ -425,7 +430,18 @@ class ReferencesHandler:
                 continue
 
             # Look for Python source files (exclude tests and common non-source dirs)
-            exclude_dirs = {"test", "tests", "__pycache__", ".pytest_cache", "build", "dist", ".venv", "venv", "node_modules", ".git"}
+            exclude_dirs = {
+                "test",
+                "tests",
+                "__pycache__",
+                ".pytest_cache",
+                "build",
+                "dist",
+                ".venv",
+                "venv",
+                "node_modules",
+                ".git",
+            }
             for source_path in source_dir.rglob("*.py"):
                 if not source_path.is_file():
                     continue
@@ -458,7 +474,10 @@ class ReferencesHandler:
         return references
 
     def _find_artifact_references_in_manifest(
-        self, manifest: dict, manifest_path: Path, artifact_name: str
+        self,
+        manifest: dict,
+        manifest_path: Path,
+        artifact_name: str,  # noqa: ARG002
     ) -> list[Location]:
         """Find all references to an artifact in a manifest file.
 
@@ -483,8 +502,6 @@ class ReferencesHandler:
         pattern = rf'["\']{re.escape(artifact_name)}["\']'
         for line_num, line in enumerate(lines):
             for match in re.finditer(pattern, line):
-                # Check if this is in a "name" field (definition) or elsewhere (reference)
-                before_text = "".join(lines[max(0, line_num - 5) : line_num])
                 column = match.start()
                 end_column = match.end()
 
@@ -501,7 +518,11 @@ class ReferencesHandler:
         return references
 
     def _find_artifact_references_in_source(
-        self, source_path: Path, artifact_name: str, artifact_info: dict, workspace_root: Path
+        self,
+        source_path: Path,
+        artifact_name: str,
+        artifact_info: dict,  # noqa: ARG002
+        workspace_root: Path,  # noqa: ARG002
     ) -> list[Location]:
         """Find all references to an artifact in a Python source file.
 
@@ -542,20 +563,20 @@ class ReferencesHandler:
                             references.append(ref)
 
             # Attribute access
-            if isinstance(node, ast.Attribute):
-                if node.attr == artifact_name:
-                    ref = self._create_location_from_node(node, lines, source_path)
-                    if ref:
-                        references.append(ref)
+            if isinstance(node, ast.Attribute) and node.attr == artifact_name:
+                ref = self._create_location_from_node(node, lines, source_path)
+                if ref:
+                    references.append(ref)
 
             # Name references (imports, assignments, etc.)
-            if isinstance(node, ast.Name):
-                if node.id == artifact_name:
-                    # Skip if it's a definition (handled separately)
-                    if not isinstance(node.ctx, ast.Store):
-                        ref = self._create_location_from_node(node, lines, source_path)
-                        if ref:
-                            references.append(ref)
+            if (
+                isinstance(node, ast.Name)
+                and node.id == artifact_name
+                and not isinstance(node.ctx, ast.Store)
+            ):
+                ref = self._create_location_from_node(node, lines, source_path)
+                if ref:
+                    references.append(ref)
 
             # Import statements
             if isinstance(node, ast.Import):
@@ -646,7 +667,10 @@ class ReferencesHandler:
         return None
 
     def _get_artifact_info_from_source(
-        self, document: TextDocument, source_path: Path, artifact_name: str
+        self,
+        document: TextDocument,
+        source_path: Path,
+        artifact_name: str,  # noqa: ARG002
     ) -> dict | None:
         """Get artifact information from a source file.
 
@@ -676,9 +700,7 @@ class ReferencesHandler:
 
         return None
 
-    def _get_word_at_position(
-        self, document: TextDocument, position: Position
-    ) -> str | None:
+    def _get_word_at_position(self, document: TextDocument, position: Position) -> str | None:
         """Extract the word at the given position.
 
         Args:

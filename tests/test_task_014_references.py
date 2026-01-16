@@ -7,10 +7,9 @@ find-references requests to locate all places where artifacts are referenced.
 import json
 from pathlib import Path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 
 import pytest
-
 from lsprotocol.types import Position, ReferenceParams, TextDocumentIdentifier
 from pygls.workspace import TextDocument
 
@@ -99,6 +98,7 @@ class TestReferencesHandlerGetReferences:
 
             # Mock workspace root
             import os
+
             original_cwd = os.getcwd()
             try:
                 os.chdir(tmpdir)
@@ -135,6 +135,7 @@ class TestReferencesHandlerFindInManifests:
             artifact_info = {"type": "function", "name": "my_function"}
 
             import os
+
             original_cwd = os.getcwd()
             try:
                 os.chdir(tmpdir)
@@ -211,12 +212,14 @@ class TestReferencesHandlerUtilityMethods:
         handler = ReferencesHandler()
 
         document = MagicMock(spec=TextDocument)
-        document.source = json.dumps({
-            "expectedArtifacts": {
-                "file": "src/module.py",
-                "contains": [{"type": "function", "name": "my_function"}],
-            },
-        })
+        document.source = json.dumps(
+            {
+                "expectedArtifacts": {
+                    "file": "src/module.py",
+                    "contains": [{"type": "function", "name": "my_function"}],
+                },
+            }
+        )
 
         artifact_info = handler._get_artifact_info_from_manifest(document, "my_function")
 
@@ -352,7 +355,9 @@ class TestReferencesHandlerFindInTests:
 
             # Create test file
             test_file = tests_dir / "test_task_001.py"
-            test_file.write_text("def test_my_function():\n    from src.module import my_function\n    assert my_function() is not None\n")
+            test_file.write_text(
+                "def test_my_function():\n    from src.module import my_function\n    assert my_function() is not None\n"
+            )
 
             # Create manifest with validationCommand
             manifest_content = {
@@ -375,6 +380,7 @@ class TestReferencesHandlerFindInTests:
             artifact_info = {"type": "function", "name": "my_function"}
 
             import os
+
             original_cwd = os.getcwd()
             try:
                 os.chdir(tmpdir)

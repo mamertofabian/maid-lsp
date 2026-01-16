@@ -76,18 +76,19 @@ def find_function_definition(
                 parent = _get_parent_class(node, tree)
                 if parent and parent.name == class_name:
                     return _create_location_from_node(node, file_path)
-        elif isinstance(node, ast.AsyncFunctionDef):
-            if node.name == name:
-                if class_name is None:
-                    return _create_location_from_node(node, file_path)
-                parent = _get_parent_class(node, tree)
-                if parent and parent.name == class_name:
-                    return _create_location_from_node(node, file_path)
+        elif isinstance(node, ast.AsyncFunctionDef) and node.name == name:  # noqa: SIM102
+            if class_name is None:
+                return _create_location_from_node(node, file_path)
+            parent = _get_parent_class(node, tree)
+            if parent and parent.name == class_name:
+                return _create_location_from_node(node, file_path)
 
     return None
 
 
-def find_class_definition(tree: ast.Module, name: str, file_path: Path | None = None) -> ArtifactLocation | None:
+def find_class_definition(
+    tree: ast.Module, name: str, file_path: Path | None = None
+) -> ArtifactLocation | None:
     """Find a class definition in an AST.
 
     Args:
@@ -102,14 +103,15 @@ def find_class_definition(tree: ast.Module, name: str, file_path: Path | None = 
         return None
 
     for node in ast.walk(tree):
-        if isinstance(node, ast.ClassDef):
-            if node.name == name:
-                return _create_location_from_node(node, file_path)
+        if isinstance(node, ast.ClassDef) and node.name == name:
+            return _create_location_from_node(node, file_path)
 
     return None
 
 
-def find_attribute_definition(tree: ast.Module, name: str, file_path: Path | None = None) -> ArtifactLocation | None:
+def find_attribute_definition(
+    tree: ast.Module, name: str, file_path: Path | None = None
+) -> ArtifactLocation | None:
     """Find a module-level attribute definition in an AST.
 
     Args:
@@ -128,9 +130,12 @@ def find_attribute_definition(tree: ast.Module, name: str, file_path: Path | Non
             for target in node.targets:
                 if isinstance(target, ast.Name) and target.id == name:
                     return _create_location_from_node(target, file_path)
-        elif isinstance(node, ast.AnnAssign):
-            if isinstance(node.target, ast.Name) and node.target.id == name:
-                return _create_location_from_node(node.target, file_path)
+        elif (
+            isinstance(node, ast.AnnAssign)
+            and isinstance(node.target, ast.Name)
+            and node.target.id == name
+        ):
+            return _create_location_from_node(node.target, file_path)
 
     return None
 
@@ -168,9 +173,7 @@ def find_artifact_definition(
     return location
 
 
-def _create_location_from_node(
-    node: ast.AST, file_path: Path
-) -> ArtifactLocation | None:
+def _create_location_from_node(node: ast.AST, file_path: Path) -> ArtifactLocation | None:
     """Create an ArtifactLocation from an AST node.
 
     Args:
@@ -190,7 +193,7 @@ def _create_location_from_node(
     end_line = line
     end_column = column
 
-    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+    if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef):
         # For definitions, use the name length
         name_length = len(node.name)
         end_column = column + name_length
@@ -219,6 +222,6 @@ def _get_parent_class(node: ast.AST, tree: ast.Module) -> ast.ClassDef | None:
     for parent in ast.walk(tree):
         if isinstance(parent, ast.ClassDef):
             for child in ast.walk(parent):
-                if child is node and isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                if child is node and isinstance(child, ast.FunctionDef | ast.AsyncFunctionDef):
                     return parent
     return None

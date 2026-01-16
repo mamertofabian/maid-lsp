@@ -34,17 +34,13 @@ def _ranges_overlap(range1: Range, range2: Range) -> bool:
     """
     # range1 ends before range2 starts
     if (range1.end.line < range2.start.line) or (
-        range1.end.line == range2.start.line
-        and range1.end.character < range2.start.character
+        range1.end.line == range2.start.line and range1.end.character < range2.start.character
     ):
         return False
     # range1 starts after range2 ends
     return not (
         (range1.start.line > range2.end.line)
-        or (
-            range1.start.line == range2.end.line
-            and range1.start.character > range2.end.character
-        )
+        or (range1.start.line == range2.end.line and range1.start.character > range2.end.character)
     )
 
 
@@ -197,9 +193,7 @@ def create_generate_snapshot_action(manifest_uri: str) -> CodeAction:
     )
 
 
-def create_update_version_action(
-    document_uri: str, current_version: str | None
-) -> CodeAction:
+def create_update_version_action(document_uri: str, current_version: str | None) -> CodeAction:
     """Create a code action to update the manifest version field.
 
     Creates a CodeAction with kind 'quickfix' that updates the version field

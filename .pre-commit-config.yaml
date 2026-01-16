@@ -1,0 +1,52 @@
+# Pre-commit hooks for maid-lsp
+# Install with: make pre-commit-install
+# Run manually with: make pre-commit
+#
+# Hooks run in order:
+# 1. Format code with black
+# 2. Lint with ruff (with auto-fix)
+# 3. Validate changed manifests with maid validate
+# 4. Run maid test (all validation commands)
+
+repos:
+  # Format code with black
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+        language_version: python3
+        args: ["--line-length=100"]
+        files: ^(maid_lsp|tests|scripts)/.*\.py$
+
+  # Lint with ruff
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      - id: ruff
+        args: ["--fix", "--exit-non-zero-on-fix"]
+        files: ^(maid_lsp|tests|scripts)/.*\.py$
+      - id: ruff-format
+        files: ^(maid_lsp|tests|scripts)/.*\.py$
+
+  # Validate manifests with maid (only changed manifest files)
+  - repo: local
+    hooks:
+      - id: maid-validate
+        name: maid validate (changed manifests)
+        entry: bash -c 'cd "$(git rev-parse --show-toplevel)" && for file in "$@"; do echo "Validating $file..."; uv run maid validate "$file" --validation-mode implementation --use-manifest-chain --quiet || exit 1; done' --
+        language: system
+        types: [json]
+        files: ^manifests/.*\.manifest\.json$
+        pass_filenames: true
+
+  # Run maid test (runs all validation commands from manifests)
+  # Note: This runs all tests and can be slow. Consider running manually before pushing.
+  # To only run on push, uncomment the stages line below.
+  - repo: local
+    hooks:
+      - id: maid-test
+        name: maid test
+        entry: bash -c 'cd "$(git rev-parse --show-toplevel)" && uv run maid test --quiet || exit 1'
+        language: system
+        pass_filenames: false
+        # stages: [pre-push]  # Uncomment to only run on push (recommended for speed)

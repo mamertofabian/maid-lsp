@@ -194,7 +194,7 @@ class DefinitionHandler:
                 with open(manifest_path, encoding="utf-8") as f:
                     manifest_content = f.read()
                 manifest = json.loads(manifest_content)
-            except (OSError, json.JSONDecodeError) as e:
+            except (OSError, json.JSONDecodeError):
                 continue
 
             # Check if this manifest defines the artifact
@@ -250,7 +250,7 @@ class DefinitionHandler:
             if match:
                 # Check if this is actually in the "name" field of an artifact
                 # Look for "name" field before the artifact name on the same line
-                line_before_match = line[:match.start()]
+                line_before_match = line[: match.start()]
                 # Check for "name": pattern (with colon) before the match
                 if '"name"' in line_before_match or "'name'" in line_before_match:
                     column = match.start()
@@ -311,9 +311,7 @@ class DefinitionHandler:
         # Fallback: use the manifest's parent directory
         return manifest_path.parent
 
-    def _get_word_at_position(
-        self, document: TextDocument, position: Position
-    ) -> str | None:
+    def _get_word_at_position(self, document: TextDocument, position: Position) -> str | None:
         """Extract the word at the given position.
 
         Args:
