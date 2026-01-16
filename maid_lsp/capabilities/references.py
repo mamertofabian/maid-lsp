@@ -120,7 +120,8 @@ class ReferencesHandler:
                             with open(manifest_path, encoding="utf-8") as f:
                                 manifest_content = f.read()
                             artifact_info = self._get_artifact_info_from_manifest(
-                                TextDocument(f"file://{manifest_path}", manifest_content), word
+                                TextDocument(f"file://{manifest_path}", manifest_content),
+                                word,
                             )
                             if artifact_info:
                                 # Found artifact in manifest, now find all references
@@ -475,9 +476,9 @@ class ReferencesHandler:
 
     def _find_artifact_references_in_manifest(
         self,
-        manifest: dict,
+        manifest: dict,  # noqa: ARG002
         manifest_path: Path,
-        artifact_name: str,  # noqa: ARG002
+        artifact_name: str,
     ) -> list[Location]:
         """Find all references to an artifact in a manifest file.
 
@@ -668,9 +669,9 @@ class ReferencesHandler:
 
     def _get_artifact_info_from_source(
         self,
-        document: TextDocument,
+        document: TextDocument,  # noqa: ARG002
         source_path: Path,
-        artifact_name: str,  # noqa: ARG002
+        artifact_name: str,
     ) -> dict | None:
         """Get artifact information from a source file.
 

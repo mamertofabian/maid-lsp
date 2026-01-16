@@ -29,7 +29,15 @@ class ArtifactLocation:
 
     def __hash__(self) -> int:
         """Make ArtifactLocation hashable by converting Path to string."""
-        return hash((str(self.file_path), self.line, self.column, self.end_line, self.end_column))
+        return hash(
+            (
+                str(self.file_path),
+                self.line,
+                self.column,
+                self.end_line,
+                self.end_column,
+            )
+        )
 
 
 def parse_file(file_path: Path) -> ast.Module | None:
@@ -50,7 +58,10 @@ def parse_file(file_path: Path) -> ast.Module | None:
 
 
 def find_function_definition(
-    tree: ast.Module, name: str, class_name: str | None = None, file_path: Path | None = None
+    tree: ast.Module,
+    name: str,
+    class_name: str | None = None,
+    file_path: Path | None = None,
 ) -> ArtifactLocation | None:
     """Find a function or method definition in an AST.
 

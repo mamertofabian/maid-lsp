@@ -71,12 +71,17 @@ class LSPTestClient:
             hover_params = HoverParams(
                 text_document=TextDocumentIdentifier(uri=uri),
                 position=Position(
-                    line=params["position"]["line"], character=params["position"]["character"]
+                    line=params["position"]["line"],
+                    character=params["position"]["character"],
                 ),
             )
             return self.server.hover_handler.get_hover(hover_params, doc)
         elif method == "textDocument/definition":
-            from lsprotocol.types import DefinitionParams, Position, TextDocumentIdentifier
+            from lsprotocol.types import (
+                DefinitionParams,
+                Position,
+                TextDocumentIdentifier,
+            )
             from pygls.workspace import TextDocument
 
             uri = params["textDocument"]["uri"]
@@ -86,12 +91,17 @@ class LSPTestClient:
             def_params = DefinitionParams(
                 text_document=TextDocumentIdentifier(uri=uri),
                 position=Position(
-                    line=params["position"]["line"], character=params["position"]["character"]
+                    line=params["position"]["line"],
+                    character=params["position"]["character"],
                 ),
             )
             return await self.server.definition_handler.get_definition_async(def_params, doc)
         elif method == "textDocument/references":
-            from lsprotocol.types import Position, ReferenceParams, TextDocumentIdentifier
+            from lsprotocol.types import (
+                Position,
+                ReferenceParams,
+                TextDocumentIdentifier,
+            )
             from pygls.workspace import TextDocument
 
             uri = params["textDocument"]["uri"]
@@ -101,7 +111,8 @@ class LSPTestClient:
             ref_params = ReferenceParams(
                 text_document=TextDocumentIdentifier(uri=uri),
                 position=Position(
-                    line=params["position"]["line"], character=params["position"]["character"]
+                    line=params["position"]["line"],
+                    character=params["position"]["character"],
                 ),
                 context={
                     "includeDeclaration": params.get("context", {}).get("includeDeclaration", True)

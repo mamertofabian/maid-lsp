@@ -127,7 +127,12 @@ class TestMaidRunnerValidate:
         manifest_path = Path("/path/to/valid.manifest.json")
 
         mock_output = json.dumps(
-            {"success": True, "errors": [], "warnings": [], "metadata": {"duration_ms": 50}}
+            {
+                "success": True,
+                "errors": [],
+                "warnings": [],
+                "metadata": {"duration_ms": 50},
+            }
         )
 
         mock_process = AsyncMock()
