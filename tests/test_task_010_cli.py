@@ -51,9 +51,7 @@ class TestMainFunction:
         """main should accept --stdio mode option."""
         with (
             patch("sys.argv", ["maid-lsp", "--stdio"]),
-            patch(
-                "maid_lsp.__main__.start_server", return_value=None
-            ) as mock_start,
+            patch("maid_lsp.__main__.start_server", return_value=None) as mock_start,
         ):
             main()
 
@@ -70,9 +68,7 @@ class TestMainFunction:
         """main should call start_server when run without help/version flags."""
         with (
             patch("sys.argv", ["maid-lsp", "--stdio"]),
-            patch(
-                "maid_lsp.__main__.start_server", return_value=None
-            ) as mock_start,
+            patch("maid_lsp.__main__.start_server", return_value=None) as mock_start,
         ):
             main()
 
@@ -92,9 +88,7 @@ class TestStartServerFunction:
         mock_server = MagicMock()
         mock_server.start_io = MagicMock()
 
-        with patch(
-            "maid_lsp.__main__.create_server", return_value=mock_server
-        ) as mock_create:
+        with patch("maid_lsp.__main__.create_server", return_value=mock_server) as mock_create:
             start_server(mode="stdio")
 
             # create_server should be called
@@ -105,9 +99,7 @@ class TestStartServerFunction:
         mock_server = MagicMock()
         mock_server.start_io = MagicMock()
 
-        with patch(
-            "maid_lsp.__main__.create_server", return_value=mock_server
-        ) as mock_create:
+        with patch("maid_lsp.__main__.create_server", return_value=mock_server) as mock_create:
             # Call without mode argument
             start_server()
 
@@ -121,9 +113,7 @@ class TestStartServerFunction:
         mock_server = MagicMock()
         mock_server.start_io = MagicMock()
 
-        with patch(
-            "maid_lsp.__main__.create_server", return_value=mock_server
-        ) as mock_create:
+        with patch("maid_lsp.__main__.create_server", return_value=mock_server) as mock_create:
             start_server(mode="stdio")
 
             mock_create.assert_called_once()
@@ -133,9 +123,7 @@ class TestStartServerFunction:
         mock_server = MagicMock()
         mock_server.start_io = MagicMock()
 
-        with patch(
-            "maid_lsp.__main__.create_server", return_value=mock_server
-        ):
+        with patch("maid_lsp.__main__.create_server", return_value=mock_server):
             start_server(mode="stdio")
 
             mock_server.start_io.assert_called_once()
@@ -159,9 +147,7 @@ class TestCLIIntegration:
 
         with (
             patch("sys.argv", ["maid-lsp", "--stdio"]),
-            patch(
-                "maid_lsp.__main__.create_server", return_value=mock_server
-            ),
+            patch("maid_lsp.__main__.create_server", return_value=mock_server),
         ):
             main()
 
@@ -175,9 +161,7 @@ class TestCLIIntegration:
 
         with (
             patch("sys.argv", ["maid-lsp"]),
-            patch(
-                "maid_lsp.__main__.create_server", return_value=mock_server
-            ),
+            patch("maid_lsp.__main__.create_server", return_value=mock_server),
         ):
             main()
 

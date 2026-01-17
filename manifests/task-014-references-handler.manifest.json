@@ -1,0 +1,39 @@
+{
+  "goal": "Create ReferencesHandler class in maid_lsp/capabilities/references.py for find-references LSP capability",
+  "taskType": "create",
+  "creatableFiles": ["maid_lsp/capabilities/references.py"],
+  "readonlyFiles": [
+    "maid_lsp/utils/ast_parser.py",
+    "maid_lsp/validation/runner.py"
+  ],
+  "expectedArtifacts": {
+    "file": "maid_lsp/capabilities/references.py",
+    "contains": [
+      {
+        "type": "class",
+        "name": "ReferencesHandler",
+        "description": "Handles find-references requests to locate all places where artifacts are referenced"
+      },
+      {
+        "type": "function",
+        "name": "__init__",
+        "class": "ReferencesHandler",
+        "args": [
+          {"name": "runner", "type": "MaidRunner | None"}
+        ],
+        "returns": {"type": "None"}
+      },
+      {
+        "type": "function",
+        "name": "get_references",
+        "class": "ReferencesHandler",
+        "args": [
+          {"name": "params", "type": "ReferenceParams"},
+          {"name": "document", "type": "TextDocument"}
+        ],
+        "returns": {"type": "list[Location] | None"}
+      }
+    ]
+  },
+  "validationCommand": ["pytest", "tests/test_task_014_references.py", "-v"]
+}

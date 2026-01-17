@@ -51,9 +51,7 @@ class TestCreateGenerateSnapshotAction:
 
     def test_action_has_appropriate_kind(self) -> None:
         """create_generate_snapshot_action should have source or quickfix kind."""
-        action = create_generate_snapshot_action(
-            manifest_uri="file:///path/to/manifest.json"
-        )
+        action = create_generate_snapshot_action(manifest_uri="file:///path/to/manifest.json")
 
         # Should be either a source action or quickfix
         assert action.kind in (
@@ -81,7 +79,10 @@ class TestCreateGenerateSnapshotAction:
 
         assert action.command is not None
         # Command title or command string should mention snapshot
-        assert "snapshot" in action.command.command.lower() or "snapshot" in action.command.title.lower()
+        assert (
+            "snapshot" in action.command.command.lower()
+            or "snapshot" in action.command.title.lower()
+        )
 
     def test_command_includes_manifest_uri(self) -> None:
         """create_generate_snapshot_action command should include the manifest URI."""
@@ -418,9 +419,7 @@ class TestAdditionalCodeActionsIntegration:
 
     def test_snapshot_action_uses_command(self) -> None:
         """Snapshot action should use a command (external process needed)."""
-        action = create_generate_snapshot_action(
-            manifest_uri="file:///path/to/manifest.json"
-        )
+        action = create_generate_snapshot_action(manifest_uri="file:///path/to/manifest.json")
 
         # Snapshot requires running external maid command, so should have command
         assert action.command is not None

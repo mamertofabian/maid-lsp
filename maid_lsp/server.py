@@ -6,23 +6,30 @@ and registers handlers for document lifecycle and capability features.
 
 from lsprotocol.types import (
     TEXT_DOCUMENT_CODE_ACTION,
+    TEXT_DOCUMENT_DEFINITION,
     TEXT_DOCUMENT_DID_CHANGE,
     TEXT_DOCUMENT_DID_CLOSE,
     TEXT_DOCUMENT_DID_OPEN,
     TEXT_DOCUMENT_HOVER,
+    TEXT_DOCUMENT_REFERENCES,
     CodeActionParams,
+    DefinitionParams,
     DidChangeTextDocumentParams,
     DidCloseTextDocumentParams,
     DidOpenTextDocumentParams,
     Hover,
     HoverParams,
+    Location,
+    ReferenceParams,
 )
 from pygls.lsp.server import LanguageServer
 
 from maid_lsp import __version__
 from maid_lsp.capabilities.code_actions import CodeActionsHandler
+from maid_lsp.capabilities.definition import DefinitionHandler
 from maid_lsp.capabilities.diagnostics import DiagnosticsHandler
 from maid_lsp.capabilities.hover import HoverHandler
+from maid_lsp.capabilities.references import ReferencesHandler
 from maid_lsp.utils.debounce import Debouncer
 from maid_lsp.validation.runner import MaidRunner
 
@@ -38,6 +45,8 @@ class MaidLanguageServer(LanguageServer):
         diagnostics_handler: Handler for publishing diagnostics.
         code_actions_handler: Handler for code action requests.
         hover_handler: Handler for hover requests.
+        definition_handler: Handler for go-to-definition requests.
+        references_handler: Handler for find-references requests.
     """
 
     def __init__(self, name: str = "maid-lsp", version: str = __version__) -> None:
@@ -57,6 +66,8 @@ class MaidLanguageServer(LanguageServer):
         self.diagnostics_handler = DiagnosticsHandler(runner, debouncer)
         self.code_actions_handler = CodeActionsHandler()
         self.hover_handler = HoverHandler()
+        self.definition_handler = DefinitionHandler(runner)
+        self.references_handler = ReferencesHandler(runner)
 
 
 def create_server() -> MaidLanguageServer:
@@ -130,3 +141,32 @@ def _register_handlers(server: MaidLanguageServer) -> None:
         except (FileNotFoundError, KeyError):
             # Document not opened yet or not found
             return None
+
+    @server.feature(TEXT_DOCUMENT_DEFINITION)
+    async def _definition(params: DefinitionParams) -> Location | list[Location] | None:
+        """Handle textDocument/definition request.
+
+        Returns definition location(s) for the position.
+        """
+        uri = params.text_document.uri
+        try:
+            document = server.workspace.get_text_document(uri)
+            return await server.definition_handler.get_definition_async(params, document)
+        except (FileNotFoundError, KeyError):
+            # Document not opened yet or not found
+            return None
+
+    @server.feature(TEXT_DOCUMENT_REFERENCES)
+    async def _references(params: ReferenceParams) -> list[Location] | None:
+        """Handle textDocument/references request.
+
+        Returns all reference locations for the position.
+        """
+        uri = params.text_document.uri
+        try:
+            document = server.workspace.get_text_document(uri)
+            result = await server.references_handler.get_references(params, document)
+            return result if result else []
+        except (FileNotFoundError, KeyError):
+            # Document not opened yet or not found
+            return []

@@ -1,0 +1,49 @@
+{
+  "goal": "Create DefinitionHandler class in maid_lsp/capabilities/definition.py for go-to-definition LSP capability with bidirectional navigation",
+  "taskType": "create",
+  "creatableFiles": ["maid_lsp/capabilities/definition.py"],
+  "readonlyFiles": [
+    "maid_lsp/utils/ast_parser.py",
+    "maid_lsp/validation/runner.py"
+  ],
+  "expectedArtifacts": {
+    "file": "maid_lsp/capabilities/definition.py",
+    "contains": [
+      {
+        "type": "class",
+        "name": "DefinitionHandler",
+        "description": "Handles go-to-definition requests for bidirectional navigation between manifests and source files"
+      },
+      {
+        "type": "function",
+        "name": "__init__",
+        "class": "DefinitionHandler",
+        "args": [
+          {"name": "runner", "type": "MaidRunner | None"}
+        ],
+        "returns": {"type": "None"}
+      },
+      {
+        "type": "function",
+        "name": "get_definition",
+        "class": "DefinitionHandler",
+        "args": [
+          {"name": "params", "type": "DefinitionParams"},
+          {"name": "document", "type": "TextDocument"}
+        ],
+        "returns": {"type": "Optional[Union[Location, list[Location]]]"}
+      },
+      {
+        "type": "function",
+        "name": "get_definition_async",
+        "class": "DefinitionHandler",
+        "args": [
+          {"name": "params", "type": "DefinitionParams"},
+          {"name": "document", "type": "TextDocument"}
+        ],
+        "returns": {"type": "Optional[Union[Location, list[Location]]]"}
+      }
+    ]
+  },
+  "validationCommand": ["pytest", "tests/test_task_013_definition.py", "-v"]
+}
