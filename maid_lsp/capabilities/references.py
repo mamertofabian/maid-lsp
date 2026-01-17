@@ -141,7 +141,29 @@ class ReferencesHandler:
                     pass
 
         # Deduplicate references based on URI, line, and column
-        return self._deduplicate_locations(references) if references else []
+        deduplicated = self._deduplicate_locations(references) if references else []
+
+        # Honor includeDeclaration flag from LSP context
+        # When False, filter out the reference at the cursor position (the declaration itself)
+        if (
+            params.context
+            and hasattr(params.context, "include_declaration")
+            and not params.context.include_declaration
+        ):
+            cursor_uri = uri
+            cursor_line = params.position.line
+            cursor_char = params.position.character
+            deduplicated = [
+                ref
+                for ref in deduplicated
+                if not (
+                    ref.uri == cursor_uri
+                    and ref.range.start.line == cursor_line
+                    and ref.range.start.character <= cursor_char <= ref.range.end.character
+                )
+            ]
+
+        return deduplicated
 
     async def _find_in_manifests(
         self,
@@ -191,13 +213,8 @@ class ReferencesHandler:
 
         # Now parse only the manifests that contain the artifact
         for manifest_path in manifests_to_parse:
-            try:
-                with open(manifest_path, encoding="utf-8") as f:
-                    f.read()  # Verify file is readable
-            except (OSError, json.JSONDecodeError):
-                continue
-
             # Find artifact references in this manifest
+            # Note: _find_artifact_references_in_manifest handles OSError internally
             manifest_refs = self._find_artifact_references_in_manifest(manifest_path, artifact_name)
             references.extend(manifest_refs)
 
