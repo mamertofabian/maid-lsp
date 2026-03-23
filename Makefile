@@ -13,19 +13,19 @@ dev:
 
 # Lint code with ruff
 lint:
-	uv run ruff check maid_lsp tests
+	uv run ruff check maid_lsp tests scripts
 
 # Fix linting issues automatically
 lint-fix:
-	uv run ruff check --fix maid_lsp tests
+	uv run ruff check --fix maid_lsp tests scripts
 
 # Format code with black
 format:
-	uv run black maid_lsp tests
+	uv run black --line-length=100 maid_lsp tests scripts
 
 # Check formatting without making changes
 format-check:
-	uv run black --check maid_lsp tests
+	uv run black --check --line-length=100 maid_lsp tests scripts
 
 # Type check with mypy
 type-check:

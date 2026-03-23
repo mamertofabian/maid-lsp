@@ -29,9 +29,7 @@ class HoverHandler:
         """Initialize the HoverHandler."""
         pass
 
-    def get_hover(
-        self, params: HoverParams, document: TextDocument
-    ) -> Hover | None:
+    def get_hover(self, params: HoverParams, document: TextDocument) -> Hover | None:
         """Get hover information for a position in the document.
 
         Args:
@@ -105,9 +103,7 @@ class HoverHandler:
 
         return None
 
-    def _find_artifact_by_name(
-        self, manifest: dict, name: str
-    ) -> dict | None:
+    def _find_artifact_by_name(self, manifest: dict, name: str) -> dict | None:
         """Find an artifact by name in the manifest.
 
         Args:

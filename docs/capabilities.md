@@ -31,9 +31,9 @@ The MAID LSP server implements a subset of the Language Server Protocol focused 
 |---------|---------|-------|
 | `textDocument/codeAction` | ✅ | Quick fixes |
 | `textDocument/hover` | ✅ | Artifact information |
+| `textDocument/definition` | ✅ | Bidirectional navigation (manifest ↔ source) |
+| `textDocument/references` | ✅ | Find references across manifests, tests, and source files |
 | `textDocument/completion` | ❌ | Future enhancement |
-| `textDocument/definition` | ❌ | Future enhancement |
-| `textDocument/references` | ❌ | Future enhancement |
 
 ## Diagnostic Codes
 
@@ -215,6 +215,8 @@ The server advertises the following capabilities during initialization:
       "codeActionKinds": ["quickfix"]
     },
     "hoverProvider": true,
+    "definitionProvider": true,
+    "referencesProvider": true,
     "diagnosticProvider": {
       "interFileDependencies": false,
       "workspaceDiagnostics": false
@@ -223,12 +225,64 @@ The server advertises the following capabilities during initialization:
 }
 ```
 
+## Go-to-Definition
+
+### Supported Navigation
+
+The definition provider supports bidirectional navigation:
+
+- **Manifest → Source File**: Click on an artifact name in a manifest to jump to its definition in the source file
+- **Source File → Manifest**: Click on an artifact name in a source file to jump to its definition in the manifest
+
+### Supported Artifact Types
+
+- Functions (module-level and class methods)
+- Classes
+- Attributes (module-level)
+
+### Example Usage
+
+**From Manifest:**
+1. Open a manifest file (e.g., `manifests/task-001.manifest.json`)
+2. Position cursor on an artifact name (e.g., `"my_function"`)
+3. Use "Go to Definition" (F12 or Ctrl+Click)
+4. Editor jumps to the function definition in the source file
+
+**From Source File:**
+1. Open a Python source file
+2. Position cursor on an artifact name (e.g., `my_function`)
+3. Use "Go to Definition" (F12 or Ctrl+Click)
+4. Editor jumps to the artifact definition in the manifest file
+
+## Find References
+
+### Supported Search Locations
+
+The references provider searches for artifact references across:
+
+- **Manifest Files**: All manifests that reference the artifact
+- **Test Files**: Test files that import or use the artifact
+- **Source Files**: Source files that import or use the artifact
+
+### Example Usage
+
+1. Position cursor on an artifact name (in manifest or source file)
+2. Use "Find References" (Shift+F12)
+3. Editor shows all locations where the artifact is referenced
+
+### Reference Types Detected
+
+- Artifact definitions in manifests
+- Function/method calls
+- Import statements
+- Attribute access
+- Name references (excluding definitions)
+
 ## Future Capabilities
 
 ### Planned for v2.1
 
 - **Completion Provider**: Suggest field names, artifact types, file paths
-- **Definition Provider**: Jump to artifact definition in source file
 - **Workspace Diagnostics**: Validate all manifests in workspace
 - **Semantic Tokens**: Syntax highlighting for manifest structure
 

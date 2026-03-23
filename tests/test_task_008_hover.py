@@ -48,7 +48,7 @@ class TestHoverHandlerGetHover:
 
         # Create a mock document with content containing an artifact reference
         document = MagicMock(spec=TextDocument)
-        document.source = '''{
+        document.source = """{
     "expectedArtifacts": {
         "file": "src/module.py",
         "contains": [
@@ -60,7 +60,7 @@ class TestHoverHandlerGetHover:
             }
         ]
     }
-}'''
+}"""
         # Line 6 contains "my_function"
         document.lines = document.source.split("\n")
 
@@ -80,10 +80,10 @@ class TestHoverHandlerGetHover:
 
         # Create a mock document with simple content
         document = MagicMock(spec=TextDocument)
-        document.source = '''{
+        document.source = """{
     "goal": "Test manifest",
     "taskType": "create"
-}'''
+}"""
         document.lines = document.source.split("\n")
 
         params = HoverParams(
@@ -102,7 +102,7 @@ class TestHoverHandlerGetHover:
 
         # Create a mock document
         document = MagicMock(spec=TextDocument)
-        document.source = '''{
+        document.source = """{
     "expectedArtifacts": {
         "file": "src/module.py",
         "contains": [
@@ -113,7 +113,7 @@ class TestHoverHandlerGetHover:
             }
         ]
     }
-}'''
+}"""
         document.lines = document.source.split("\n")
 
         params = HoverParams(
@@ -133,7 +133,7 @@ class TestHoverHandlerGetHover:
 
         # Create a mock document with artifact content
         document = MagicMock(spec=TextDocument)
-        document.source = '''{
+        document.source = """{
     "expectedArtifacts": {
         "file": "src/module.py",
         "contains": [
@@ -146,7 +146,7 @@ class TestHoverHandlerGetHover:
             }
         ]
     }
-}'''
+}"""
         document.lines = document.source.split("\n")
 
         params = HoverParams(
@@ -173,7 +173,7 @@ class TestHoverHandlerGetHover:
         handler = HoverHandler()
 
         document = MagicMock(spec=TextDocument)
-        document.source = '''{
+        document.source = """{
     "expectedArtifacts": {
         "file": "src/models.py",
         "contains": [
@@ -185,7 +185,7 @@ class TestHoverHandlerGetHover:
             }
         ]
     }
-}'''
+}"""
         document.lines = document.source.split("\n")
 
         params = HoverParams(
@@ -467,7 +467,7 @@ class TestHoverHandlerIntegration:
         handler = HoverHandler()
 
         document = MagicMock(spec=TextDocument)
-        document.source = '''{
+        document.source = """{
     "expectedArtifacts": {
         "file": "src/handler.py",
         "contains": [
@@ -480,7 +480,7 @@ class TestHoverHandlerIntegration:
             }
         ]
     }
-}'''
+}"""
         document.lines = document.source.split("\n")
 
         params = HoverParams(

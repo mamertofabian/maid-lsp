@@ -1,0 +1,31 @@
+{
+  "goal": "Integrate DefinitionHandler and ReferencesHandler into maid_lsp/server.py, register LSP handlers for textDocument/definition and textDocument/references",
+  "taskType": "edit",
+  "editableFiles": ["maid_lsp/server.py"],
+  "readonlyFiles": [
+    "maid_lsp/capabilities/definition.py",
+    "maid_lsp/capabilities/references.py"
+  ],
+  "expectedArtifacts": {
+    "file": "maid_lsp/server.py",
+    "contains": [
+      {
+        "type": "class",
+        "name": "MaidLanguageServer",
+        "description": "Main LSP server class with handlers for diagnostics, code actions, hover, definition, and references"
+      },
+      {
+        "type": "function",
+        "name": "__init__",
+        "class": "MaidLanguageServer",
+        "description": "Initializes all handlers including definition_handler and references_handler"
+      },
+      {
+        "type": "function",
+        "name": "_register_handlers",
+        "description": "Registers LSP handlers including TEXT_DOCUMENT_DEFINITION and TEXT_DOCUMENT_REFERENCES"
+      }
+    ]
+  },
+  "validationCommand": ["pytest", "tests/test_task_009_server.py", "-v"]
+}

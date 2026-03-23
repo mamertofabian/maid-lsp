@@ -1,0 +1,62 @@
+# Pre-commit hooks for maid-lsp
+# Install with: make pre-commit-install
+# Run manually with: make pre-commit
+#
+# Hooks run in order:
+# 1. Format code with black (via uv)
+# 2. Lint with ruff (via uv, with auto-fix)
+# 3. Validate changed manifests with maid validate
+# 4. Run maid test (all validation commands)
+
+repos:
+  # Format code with black (using local uv installation)
+  - repo: local
+    hooks:
+      - id: black
+        name: black
+        entry: bash -c 'cd "$(git rev-parse --show-toplevel)" && uv run black --line-length=100 "$@"' --
+        language: system
+        types: [python]
+        files: ^(maid_lsp|tests|scripts)/.*\.py$
+        pass_filenames: true
+
+  # Lint with ruff (using local uv installation)
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff
+        entry: bash -c 'cd "$(git rev-parse --show-toplevel)" && uv run ruff check --fix --exit-non-zero-on-fix "$@"' --
+        language: system
+        types: [python]
+        files: ^(maid_lsp|tests|scripts)/.*\.py$
+        pass_filenames: true
+      - id: ruff-format
+        name: ruff-format
+        entry: bash -c 'cd "$(git rev-parse --show-toplevel)" && uv run ruff format "$@"' --
+        language: system
+        types: [python]
+        files: ^(maid_lsp|tests|scripts)/.*\.py$
+        pass_filenames: true
+
+  # Validate manifests with maid (only changed manifest files)
+  - repo: local
+    hooks:
+      - id: maid-validate
+        name: maid validate (changed manifests)
+        entry: bash -c 'cd "$(git rev-parse --show-toplevel)" && for file in "$@"; do echo "Validating $file..."; uv run maid validate "$file" --validation-mode implementation --use-manifest-chain --quiet || exit 1; done' --
+        language: system
+        types: [json]
+        files: ^manifests/.*\.manifest\.json$
+        pass_filenames: true
+
+  # Run maid test (runs all validation commands from manifests)
+  # Note: This runs all tests and can be slow. Consider running manually before pushing.
+  # To only run on push, uncomment the stages line below.
+  - repo: local
+    hooks:
+      - id: maid-test
+        name: maid test
+        entry: bash -c 'cd "$(git rev-parse --show-toplevel)" && uv run maid test --quiet || exit 1'
+        language: system
+        pass_filenames: false
+        # stages: [pre-push]  # Uncomment to only run on push (recommended for speed)

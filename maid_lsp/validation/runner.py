@@ -35,9 +35,7 @@ class MaidRunner:
                 Defaults to "maid" if not specified.
             timeout: Timeout in seconds for CLI operations. Defaults to 10.0.
         """
-        self.maid_runner_path = (
-            maid_runner_path if maid_runner_path is not None else "maid"
-        )
+        self.maid_runner_path = maid_runner_path if maid_runner_path is not None else "maid"
         self.timeout = timeout
 
     def _find_project_root(self, manifest_path: Path) -> Path:
