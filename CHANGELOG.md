@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-03-26
+
+### Added
+- Go-to-definition support for bidirectional navigation between manifests and source files
+- Find-references support to locate artifact usage across manifests, tests, and source files
+- Pre-commit hooks for automated linting, formatting, and manifest validation
+- LSP integration tests for server initialization, validation, hover, definition, and references
+
+### Changed
+- Replace maid-runner subprocess calls with direct library imports (maid-runner v2.0.0)
+- Validation now uses `asyncio.to_thread()` for non-blocking library calls instead of subprocess execution
+- Bump maid-runner dependency from >=0.11.4 to >=2.0.0
+- Remove `maid_runner_path` configuration option (no longer needed with library imports)
+
 ## [0.1.10] - 2026-01-16
 
 ### Changed
@@ -71,7 +85,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Debouncing for document changes (100ms delay)
 - Support for VS Code, JetBrains IDEs, and Claude Code
 
-[Unreleased]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.10...HEAD
+[Unreleased]: https://github.com/mamertofabian/maid-lsp/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.10...v0.2.0
 [0.1.10]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/mamertofabian/maid-lsp/compare/v0.1.7...v0.1.8
