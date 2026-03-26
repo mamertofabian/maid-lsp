@@ -2,7 +2,7 @@
   "goal": "Define data models for validation results in maid_lsp/validation/models.py",
   "taskType": "create",
   "supersedes": [],
-  "creatableFiles": ["maid_lsp/validation/models.py"],
+  "editableFiles": ["maid_lsp/validation/models.py"],
   "readonlyFiles": [],
   "expectedArtifacts": {
     "file": "maid_lsp/validation/models.py",

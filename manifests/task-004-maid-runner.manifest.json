@@ -2,7 +2,7 @@
   "goal": "Create an async wrapper for maid-runner CLI execution in maid_lsp/validation/runner.py",
   "taskType": "create",
   "supersedes": [],
-  "creatableFiles": ["maid_lsp/validation/runner.py"],
+  "editableFiles": ["maid_lsp/validation/runner.py"],
   "readonlyFiles": ["maid_lsp/validation/models.py"],
   "expectedArtifacts": {
     "file": "maid_lsp/validation/runner.py",

@@ -2,7 +2,7 @@
   "goal": "Handle diagnostic publishing with debouncing in maid_lsp/capabilities/diagnostics.py",
   "taskType": "create",
   "supersedes": [],
-  "creatableFiles": ["maid_lsp/capabilities/diagnostics.py"],
+  "editableFiles": ["maid_lsp/capabilities/diagnostics.py"],
   "readonlyFiles": [
     "maid_lsp/validation/runner.py",
     "maid_lsp/validation/parser.py",

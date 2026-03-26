@@ -2,7 +2,7 @@
   "goal": "Create async debouncer for document change events with configurable delay",
   "taskType": "create",
   "supersedes": [],
-  "creatableFiles": ["maid_lsp/utils/debounce.py"],
+  "editableFiles": ["maid_lsp/utils/debounce.py"],
   "readonlyFiles": [],
   "expectedArtifacts": {
     "file": "maid_lsp/utils/debounce.py",

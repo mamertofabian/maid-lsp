@@ -1,7 +1,7 @@
 {
   "goal": "Create AST parsing utilities in maid_lsp/utils/ast_parser.py for finding artifact definitions in Python source files",
   "taskType": "create",
-  "creatableFiles": ["maid_lsp/utils/ast_parser.py"],
+  "editableFiles": ["maid_lsp/utils/ast_parser.py"],
   "readonlyFiles": [],
   "expectedArtifacts": {
     "file": "maid_lsp/utils/ast_parser.py",

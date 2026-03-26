@@ -1,7 +1,7 @@
 {
   "goal": "Create DefinitionHandler class in maid_lsp/capabilities/definition.py for go-to-definition LSP capability with bidirectional navigation",
   "taskType": "create",
-  "creatableFiles": ["maid_lsp/capabilities/definition.py"],
+  "editableFiles": ["maid_lsp/capabilities/definition.py"],
   "readonlyFiles": [
     "maid_lsp/utils/ast_parser.py",
     "maid_lsp/validation/runner.py"
