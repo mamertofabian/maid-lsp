@@ -402,15 +402,19 @@ class ReferencesHandler:
         # This is optional - if tomli isn't available, we'll use common locations
         if (workspace_root / "pyproject.toml").exists():
             try:
-                # Try tomli first (common in modern Python projects)
+                # Try tomli first, then tomllib (Python 3.11+)
+                toml_parser = None
                 try:
-                    import tomli as toml_parser
+                    import tomli
+
+                    toml_parser = tomli
                 except ImportError:
-                    # Fallback to tomllib (Python 3.11+)
                     try:
-                        import tomllib as toml_parser
+                        import tomllib
+
+                        toml_parser = tomllib
                     except ImportError:
-                        toml_parser = None
+                        pass
 
                 if toml_parser:
                     with open(workspace_root / "pyproject.toml", "rb") as f:
